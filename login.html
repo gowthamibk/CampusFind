@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login - CampusFind</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            CampusFind
+        </div>
+
+        <div class="nav-links">
+
+            <a href="index.html">Home</a>
+
+            <a href="items.html">Browse Items</a>
+
+            <a href="report-lost.html">Report Lost</a>
+
+            <a href="report-found.html">Report Found</a>
+
+            <a href="login.html" class="login-btn">
+                Login
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- Login Section -->
+
+    <section class="login-section">
+
+        <div class="login-container">
+
+            <h1>Welcome Back</h1>
+
+            <p class="login-description">
+                Login to your CampusFind account
+            </p>
+
+
+            <form id="loginForm">
+
+
+                <!-- Email -->
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter your email"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Password -->
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter your password"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Remember Me -->
+
+                <div class="remember-me">
+
+                    <input
+                        type="checkbox"
+                        id="remember"
+                    >
+
+                    <label for="remember">
+                        Remember me
+                    </label>
+
+                </div>
+
+
+                <!-- Login Button -->
+
+                <button
+                    type="submit"
+                    class="submit-btn login-submit"
+                >
+                    Login
+                </button>
+
+
+                <!-- Register -->
+
+                <p class="register-text">
+
+                    Don't have an account?
+
+                    <a href="register.html">
+                        Create Account
+                    </a>
+
+                </p>
+
+            </form>
+
+        </div>
+
+    </section>
+
+
+    <!-- Footer -->
+
+    <footer>
+
+        <h3>
+            CampusFind
+        </h3>
+
+        <p>
+            Smart Campus Lost & Found Management System
+        </p>
+
+        <p>
+            © 2026 CampusFind. All Rights Reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- JavaScript -->
+
+    <script>
+
+        const loginForm = document.getElementById("loginForm");
+
+        loginForm.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            alert("Login successful!");
+
+            loginForm.reset();
+
+        });
+
+    </script>
+
+</body>
+
+</html>
+

@@ -1,0 +1,338 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Browse Items - CampusFind</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            CampusFind
+        </div>
+
+        <div class="nav-links">
+
+            <a href="index.html">Home</a>
+
+            <a href="items.html">Browse Items</a>
+
+            <a href="report-lost.html">Report Lost</a>
+
+            <a href="report-found.html">Report Found</a>
+
+            <a href="login.html" class="login-btn">
+                Login
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- Page Header -->
+
+    <section class="page-header">
+
+        <h1>Browse Lost & Found Items</h1>
+
+        <p>
+            Search for items that have been reported lost or found on campus.
+        </p>
+
+    </section>
+
+
+    <!-- Search Section -->
+
+    <section class="search-section">
+
+        <input
+            type="text"
+            placeholder="Search for an item..."
+            id="searchInput"
+        >
+
+        <select id="categoryFilter">
+
+            <option value="all">
+                All Categories
+            </option>
+
+            <option value="electronics">
+                Electronics
+            </option>
+
+            <option value="documents">
+                Documents
+            </option>
+
+            <option value="books">
+                Books
+            </option>
+
+            <option value="bags">
+                Bags
+            </option>
+
+            <option value="accessories">
+                Accessories
+            </option>
+
+            <option value="others">
+                Others
+            </option>
+
+        </select>
+
+        <select id="typeFilter">
+
+            <option value="all">
+                Lost & Found
+            </option>
+
+            <option value="lost">
+                Lost Items
+            </option>
+
+            <option value="found">
+                Found Items
+            </option>
+
+        </select>
+
+        <button onclick="filterItems()">
+            Search
+        </button>
+
+    </section>
+
+
+    <!-- Items -->
+
+    <section class="items-section">
+
+        <div class="items-grid">
+
+
+            <!-- Item 1 - Black iPhone -->
+
+            <div class="item-card"
+                 data-category="electronics"
+                 data-type="lost">
+
+                <div class="item-image">
+                    📱
+                </div>
+
+                <div class="item-content">
+
+                    <span class="status lost">
+                        LOST
+                    </span>
+
+                    <h3>
+                        Black iPhone
+                    </h3>
+
+                    <p>
+                        Black iPhone with a transparent case.
+                    </p>
+
+                    <p class="location">
+                        📍 Library
+                    </p>
+
+                    <p class="date">
+                        📅 28 August 2026
+                    </p>
+
+                    <a
+                        href="item-details.html"
+                        class="details-btn"
+                    >
+                        View Details
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Item 2 - Student ID Card -->
+
+            <div class="item-card"
+                 data-category="documents"
+                 data-type="found">
+
+                <div class="item-image">
+                    🪪
+                </div>
+
+                <div class="item-content">
+
+                    <span class="status found">
+                        FOUND
+                    </span>
+
+                    <h3>
+                        Student ID Card
+                    </h3>
+
+                    <p>
+                        RV University student ID card.
+                    </p>
+
+                    <p class="location">
+                        📍 Block A
+                    </p>
+
+                    <p class="date">
+                        📅 27 August 2026
+                    </p>
+
+                    <a
+                        href="item-details.html"
+                        class="details-btn"
+                    >
+                        View Details
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Item 3 - Data Science Book -->
+
+            <div class="item-card"
+                 data-category="books"
+                 data-type="lost">
+
+                <div class="item-image">
+                    📚
+                </div>
+
+                <div class="item-content">
+
+                    <span class="status lost">
+                        LOST
+                    </span>
+
+                    <h3>
+                        Data Science Book
+                    </h3>
+
+                    <p>
+                        Python Data Science textbook.
+                    </p>
+
+                    <p class="location">
+                        📍 CSE Lab
+                    </p>
+
+                    <p class="date">
+                        📅 26 August 2026
+                    </p>
+
+                    <a
+                        href="item-details.html"
+                        class="details-btn"
+                    >
+                        View Details
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Item 4 - Blue Backpack -->
+
+            <div class="item-card"
+                 data-category="bags"
+                 data-type="found">
+
+                <div class="item-image">
+                    🎒
+                </div>
+
+                <div class="item-content">
+
+                    <span class="status found">
+                        FOUND
+                    </span>
+
+                    <h3>
+                        Blue Backpack
+                    </h3>
+
+                    <p>
+                        Blue backpack containing notebooks.
+                    </p>
+
+                    <p class="location">
+                        📍 Cafeteria
+                    </p>
+
+                    <p class="date">
+                        📅 25 August 2026
+                    </p>
+
+                    <a
+                        href="item-details.html"
+                        class="details-btn"
+                    >
+                        View Details
+                    </a>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- Footer -->
+
+    <footer>
+
+        <h3>
+            CampusFind
+        </h3>
+
+        <p>
+            Smart Campus Lost & Found Management System
+        </p>
+
+        <p>
+            © 2026 CampusFind. All Rights Reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- JavaScript -->
+
+    <script src="js/script.js"></script>
+
+</body>
+
+</html>
+
