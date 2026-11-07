@@ -1,0 +1,285 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Item - CampusFind</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .edit-container {
+            max-width: 650px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-container h1 {
+            color: #1e3a8a;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .edit-container label {
+            display: block;
+            margin: 15px 0 7px;
+            font-weight: 600;
+        }
+
+        .edit-container input,
+        .edit-container select,
+        .edit-container textarea {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        .edit-container textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .edit-container button {
+            width: 100%;
+            margin-top: 22px;
+            padding: 13px;
+            background: #1e3a8a;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .edit-container button:hover {
+            background: #162d6b;
+        }
+
+        #currentImage {
+            max-width: 180px;
+            max-height: 150px;
+            display: block;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+
+        #message {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">CampusFind</div>
+
+        <div>
+            <a href="index.html">Home</a>
+            <a href="items.html">Browse Items</a>
+            <button id="logoutButton" type="button">Logout</button>
+        </div>
+    </nav>
+
+    <div class="edit-container">
+
+        <h1>Edit Reported Item</h1>
+
+        <form id="editForm">
+
+            <label for="itemName">Item Name</label>
+            <input type="text" id="itemName" required>
+
+            <label for="category">Category</label>
+            <select id="category" required>
+                <option value="electronics">Electronics</option>
+                <option value="documents">Documents</option>
+                <option value="books">Books</option>
+                <option value="bags">Bags</option>
+                <option value="accessories">Accessories</option>
+                <option value="others">Others</option>
+            </select>
+
+            <label for="description">Description</label>
+            <textarea id="description" required></textarea>
+
+            <label for="date">Date</label>
+            <input type="date" id="date" required>
+
+            <label for="location">Location</label>
+            <input type="text" id="location" required>
+
+            <label for="contact">Contact Information</label>
+            <input type="text" id="contact" required>
+
+            <label for="type">Report Type</label>
+            <select id="type" required>
+                <option value="lost">Lost</option>
+                <option value="found">Found</option>
+            </select>
+
+            <label for="image">Change Image (Optional)</label>
+            <input type="file" id="image" accept="image/*">
+
+            <p>Current Image:</p>
+            <img id="currentImage" alt="Current item image">
+
+            <button type="submit" id="saveButton">Save Changes</button>
+
+            <p id="message"></p>
+
+        </form>
+
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:5000/api/items";
+
+        const token = localStorage.getItem("token");
+        const user = JSON.parse(localStorage.getItem("user") || "null");
+
+        const params = new URLSearchParams(window.location.search);
+        const itemId = params.get("id");
+
+        let currentItem = null;
+
+        if (!token || !user) {
+            alert("Please login first.");
+            window.location.href = "login.html";
+        }
+
+        document.getElementById("logoutButton").addEventListener("click", () => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = "login.html";
+        });
+
+        async function loadItem() {
+            try {
+                if (!itemId) {
+                    alert("Item ID is missing.");
+                    window.location.href = "items.html";
+                    return;
+                }
+
+                const response = await fetch(`${API_URL}/${itemId}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Unable to load item.");
+                }
+
+                currentItem = data;
+
+                const ownerId = typeof data.reportedBy === "object"
+                    ? data.reportedBy._id
+                    : data.reportedBy;
+
+                if (String(ownerId) !== String(user.id)) {
+                    alert("You are not authorized to edit this item.");
+                    window.location.href = "items.html";
+                    return;
+                }
+
+                document.getElementById("itemName").value = data.itemName;
+                document.getElementById("category").value = data.category;
+                document.getElementById("description").value = data.description;
+                document.getElementById("date").value =
+                    new Date(data.date).toISOString().split("T")[0];
+                document.getElementById("location").value = data.location;
+                document.getElementById("contact").value = data.contact;
+                document.getElementById("type").value = data.type;
+
+                if (data.image) {
+                    document.getElementById("currentImage").src = data.image;
+                } else {
+                    document.getElementById("currentImage").style.display = "none";
+                }
+
+            } catch (error) {
+                alert(error.message);
+                window.location.href = "items.html";
+            }
+        }
+
+        document.getElementById("editForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const saveButton = document.getElementById("saveButton");
+            const message = document.getElementById("message");
+
+            saveButton.disabled = true;
+            message.textContent = "Saving changes...";
+
+            try {
+                let imageData = currentItem.image || "";
+
+                const imageFile = document.getElementById("image").files[0];
+
+                if (imageFile) {
+                    if (!imageFile.type.startsWith("image/")) {
+                        throw new Error("Please select a valid image.");
+                    }
+
+                    if (imageFile.size > 3 * 1024 * 1024) {
+                        throw new Error("Image size must be less than 3MB.");
+                    }
+
+                    imageData = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = () => reject(new Error("Could not read image."));
+                        reader.readAsDataURL(imageFile);
+                    });
+                }
+
+                const updatedItem = {
+                    itemName: document.getElementById("itemName").value.trim(),
+                    category: document.getElementById("category").value,
+                    description: document.getElementById("description").value.trim(),
+                    date: document.getElementById("date").value,
+                    location: document.getElementById("location").value.trim(),
+                    contact: document.getElementById("contact").value.trim(),
+                    type: document.getElementById("type").value,
+                    image: imageData
+                };
+
+                const response = await fetch(`${API_URL}/${itemId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(updatedItem)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || "Unable to update item.");
+                }
+
+                alert("Item updated successfully!");
+                window.location.href = "items.html";
+
+            } catch (error) {
+                message.textContent = error.message;
+                message.style.color = "red";
+                saveButton.disabled = false;
+            }
+        });
+
+        loadItem();
+    </script>
+
+</body>
+</html>

@@ -3,21 +3,67 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Browse Items - CampusFind</title>
 
     <link rel="stylesheet" href="css/style.css">
 
+    <style>
+        .item-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .edit-btn,
+        .delete-btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .edit-btn {
+            background-color: #1e3a8a;
+        }
+
+        .edit-btn:hover {
+            background-color: #162d6b;
+        }
+
+        .delete-btn {
+            background-color: #dc2626;
+        }
+
+        .delete-btn:hover {
+            background-color: #b91c1c;
+        }
+
+        .details-btn {
+            display: inline-block;
+            margin-top: 12px;
+        }
+
+        .item-image img {
+            display: block;
+        }
+
+        #noItemsMessage {
+            text-align: center;
+            margin: 30px;
+        }
+    </style>
 </head>
 
 <body>
 
     <!-- Navigation Bar -->
-
     <nav class="navbar">
 
         <div class="logo">
@@ -34,9 +80,20 @@
 
             <a href="report-found.html">Report Found</a>
 
-            <a href="login.html" class="login-btn">
+            <a href="login.html" class="login-btn" id="loginLink">
                 Login
             </a>
+
+            <span id="userWelcome" style="display:none;"></span>
+
+            <button
+                id="logoutButton"
+                class="login-btn"
+                style="display:none; border:none; cursor:pointer;"
+                type="button"
+            >
+                Logout
+            </button>
 
         </div>
 
@@ -44,7 +101,6 @@
 
 
     <!-- Page Header -->
-
     <section class="page-header">
 
         <h1>Browse Lost & Found Items</h1>
@@ -57,7 +113,6 @@
 
 
     <!-- Search Section -->
-
     <section class="search-section">
 
         <input
@@ -68,254 +123,59 @@
 
         <select id="categoryFilter">
 
-            <option value="all">
-                All Categories
-            </option>
+            <option value="all">All Categories</option>
 
-            <option value="electronics">
-                Electronics
-            </option>
+            <option value="electronics">Electronics</option>
 
-            <option value="documents">
-                Documents
-            </option>
+            <option value="documents">Documents</option>
 
-            <option value="books">
-                Books
-            </option>
+            <option value="books">Books</option>
 
-            <option value="bags">
-                Bags
-            </option>
+            <option value="bags">Bags</option>
 
-            <option value="accessories">
-                Accessories
-            </option>
+            <option value="accessories">Accessories</option>
 
-            <option value="others">
-                Others
-            </option>
+            <option value="others">Others</option>
 
         </select>
 
         <select id="typeFilter">
 
-            <option value="all">
-                Lost & Found
-            </option>
+            <option value="all">Lost & Found</option>
 
-            <option value="lost">
-                Lost Items
-            </option>
+            <option value="lost">Lost Items</option>
 
-            <option value="found">
-                Found Items
-            </option>
+            <option value="found">Found Items</option>
 
         </select>
 
-        <button onclick="filterItems()">
+        <button id="searchButton" type="button">
             Search
         </button>
 
     </section>
 
 
-    <!-- Items -->
-
+    <!-- Items Section -->
     <section class="items-section">
 
-        <div class="items-grid">
+        <div class="items-grid" id="itemsGrid">
 
-
-            <!-- Item 1 - Black iPhone -->
-
-            <div class="item-card"
-                 data-category="electronics"
-                 data-type="lost">
-
-                <div class="item-image">
-                    📱
-                </div>
-
-                <div class="item-content">
-
-                    <span class="status lost">
-                        LOST
-                    </span>
-
-                    <h3>
-                        Black iPhone
-                    </h3>
-
-                    <p>
-                        Black iPhone with a transparent case.
-                    </p>
-
-                    <p class="location">
-                        📍 Library
-                    </p>
-
-                    <p class="date">
-                        📅 28 August 2026
-                    </p>
-
-                    <a
-                        href="item-details.html"
-                        class="details-btn"
-                    >
-                        View Details
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            <!-- Item 2 - Student ID Card -->
-
-            <div class="item-card"
-                 data-category="documents"
-                 data-type="found">
-
-                <div class="item-image">
-                    🪪
-                </div>
-
-                <div class="item-content">
-
-                    <span class="status found">
-                        FOUND
-                    </span>
-
-                    <h3>
-                        Student ID Card
-                    </h3>
-
-                    <p>
-                        RV University student ID card.
-                    </p>
-
-                    <p class="location">
-                        📍 Block A
-                    </p>
-
-                    <p class="date">
-                        📅 27 August 2026
-                    </p>
-
-                    <a
-                        href="item-details.html"
-                        class="details-btn"
-                    >
-                        View Details
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            <!-- Item 3 - Data Science Book -->
-
-            <div class="item-card"
-                 data-category="books"
-                 data-type="lost">
-
-                <div class="item-image">
-                    📚
-                </div>
-
-                <div class="item-content">
-
-                    <span class="status lost">
-                        LOST
-                    </span>
-
-                    <h3>
-                        Data Science Book
-                    </h3>
-
-                    <p>
-                        Python Data Science textbook.
-                    </p>
-
-                    <p class="location">
-                        📍 CSE Lab
-                    </p>
-
-                    <p class="date">
-                        📅 26 August 2026
-                    </p>
-
-                    <a
-                        href="item-details.html"
-                        class="details-btn"
-                    >
-                        View Details
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            <!-- Item 4 - Blue Backpack -->
-
-            <div class="item-card"
-                 data-category="bags"
-                 data-type="found">
-
-                <div class="item-image">
-                    🎒
-                </div>
-
-                <div class="item-content">
-
-                    <span class="status found">
-                        FOUND
-                    </span>
-
-                    <h3>
-                        Blue Backpack
-                    </h3>
-
-                    <p>
-                        Blue backpack containing notebooks.
-                    </p>
-
-                    <p class="location">
-                        📍 Cafeteria
-                    </p>
-
-                    <p class="date">
-                        📅 25 August 2026
-                    </p>
-
-                    <a
-                        href="item-details.html"
-                        class="details-btn"
-                    >
-                        View Details
-                    </a>
-
-                </div>
-
-            </div>
-
+            <p>Loading items...</p>
 
         </div>
+
+        <p id="noItemsMessage" style="display:none;">
+            No items found.
+        </p>
 
     </section>
 
 
     <!-- Footer -->
-
     <footer>
 
-        <h3>
-            CampusFind
-        </h3>
+        <h3>CampusFind</h3>
 
         <p>
             Smart Campus Lost & Found Management System
@@ -329,10 +189,537 @@
 
 
     <!-- JavaScript -->
+    <script>
 
-    <script src="js/script.js"></script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // API URL
+            const API_URL = "http://localhost:5000/api/items";
+
+            // Login information
+            const token = localStorage.getItem("token");
+
+            let user = null;
+
+            try {
+                user = JSON.parse(
+                    localStorage.getItem("user") || "null"
+                );
+            } catch (error) {
+                user = null;
+            }
+
+            const loginLink = document.getElementById("loginLink");
+            const logoutButton = document.getElementById("logoutButton");
+            const userWelcome = document.getElementById("userWelcome");
+
+            // Display logged-in user
+            if (token && user) {
+
+                loginLink.style.display = "none";
+
+                logoutButton.style.display = "inline-block";
+
+                userWelcome.style.display = "inline-block";
+
+                userWelcome.textContent = "Welcome, " + user.name;
+
+            }
+
+            // Logout
+            logoutButton.addEventListener("click", function () {
+
+                localStorage.removeItem("token");
+
+                localStorage.removeItem("user");
+
+                alert("You have logged out successfully!");
+
+                window.location.href = "index.html";
+
+            });
+
+
+            // Page elements
+            const itemsGrid = document.getElementById("itemsGrid");
+
+            const searchInput = document.getElementById("searchInput");
+
+            const categoryFilter = document.getElementById("categoryFilter");
+
+            const typeFilter = document.getElementById("typeFilter");
+
+            const searchButton = document.getElementById("searchButton");
+
+            const noItemsMessage = document.getElementById("noItemsMessage");
+
+
+            // Store items
+            let allItems = [];
+
+
+            // Format category
+            function formatCategory(category) {
+
+                const categories = {
+                    electronics: "Electronics",
+                    documents: "Documents",
+                    books: "Books",
+                    bags: "Bags",
+                    accessories: "Accessories",
+                    others: "Others"
+                };
+
+                return categories[category] || category;
+
+            }
+
+
+            // Format location
+            function formatLocation(location) {
+
+                const locations = {
+                    library: "Library",
+                    "block-a": "Block A",
+                    "block-b": "Block B",
+                    "cse-lab": "CSE Lab",
+                    cafeteria: "Cafeteria",
+                    parking: "Parking Area",
+                    auditorium: "Auditorium",
+                    other: "Other"
+                };
+
+                return locations[location] || location;
+
+            }
+
+
+            // Format date
+            function formatDate(dateValue) {
+
+                if (!dateValue) {
+                    return "Date not available";
+                }
+
+                const date = new Date(dateValue);
+
+                if (isNaN(date.getTime())) {
+                    return "Date not available";
+                }
+
+                return date.toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                });
+
+            }
+
+
+            // Default emoji
+            function getItemEmoji(category) {
+
+                const emojis = {
+                    electronics: "📱",
+                    documents: "🪪",
+                    books: "📚",
+                    bags: "🎒",
+                    accessories: "⌚",
+                    others: "📦"
+                };
+
+                return emojis[category] || "📦";
+
+            }
+
+
+            // Check item ownership
+            function isOwner(item) {
+
+                if (!token || !user || !user.id) {
+                    return false;
+                }
+
+                const reportedBy = item.reportedBy;
+
+                const ownerId =
+                    reportedBy && typeof reportedBy === "object"
+                        ? reportedBy._id
+                        : reportedBy;
+
+                return String(ownerId) === String(user.id);
+
+            }
+
+
+            // Delete item
+            async function deleteItem(itemId) {
+
+                const confirmed = confirm(
+                    "Are you sure you want to delete this item? This action cannot be undone."
+                );
+
+                if (!confirmed) {
+                    return;
+                }
+
+                try {
+
+                    const response = await fetch(
+                        `${API_URL}/${encodeURIComponent(itemId)}`,
+                        {
+                            method: "DELETE",
+
+                            headers: {
+                                "Authorization": "Bearer " + token
+                            }
+                        }
+                    );
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(
+                            data.message || "Unable to delete item."
+                        );
+                    }
+
+                    alert("Item deleted successfully!");
+
+                    await fetchItems();
+
+                    filterItems();
+
+                } catch (error) {
+
+                    console.error("Delete error:", error);
+
+                    alert(error.message);
+
+                }
+
+            }
+
+
+            // Display items
+            function displayItems(items) {
+
+                itemsGrid.innerHTML = "";
+
+                noItemsMessage.style.display = "none";
+
+                if (items.length === 0) {
+
+                    noItemsMessage.style.display = "block";
+
+                    return;
+
+                }
+
+
+                items.forEach(function (item) {
+
+                    // Main card
+                    const card = document.createElement("div");
+
+                    card.className = "item-card";
+
+                    card.dataset.category = item.category;
+
+                    card.dataset.type = item.type;
+
+
+                    // Image section
+                    const imageContainer = document.createElement("div");
+
+                    imageContainer.className = "item-image";
+
+
+                    if (item.image) {
+
+                        const image = document.createElement("img");
+
+                        image.src = item.image;
+
+                        image.alt = item.itemName;
+
+                        image.style.width = "100%";
+
+                        image.style.height = "100%";
+
+                        image.style.objectFit = "cover";
+
+                        imageContainer.appendChild(image);
+
+                    } else {
+
+                        imageContainer.textContent =
+                            getItemEmoji(item.category);
+
+                    }
+
+
+                    // Card content
+                    const content = document.createElement("div");
+
+                    content.className = "item-content";
+
+
+                    // Status
+                    const status = document.createElement("span");
+
+                    status.className = "status " + item.type;
+
+                    status.textContent = item.type.toUpperCase();
+
+
+                    // Item name
+                    const heading = document.createElement("h3");
+
+                    heading.textContent = item.itemName;
+
+
+                    // Description
+                    const description = document.createElement("p");
+
+                    description.textContent = item.description;
+
+
+                    // Category
+                    const category = document.createElement("p");
+
+                    category.textContent =
+                        "Category: " + formatCategory(item.category);
+
+
+                    // Location
+                    const location = document.createElement("p");
+
+                    location.className = "location";
+
+                    location.textContent =
+                        "📍 " + formatLocation(item.location);
+
+
+                    // Date
+                    const date = document.createElement("p");
+
+                    date.className = "date";
+
+                    date.textContent =
+                        "📅 " + formatDate(item.date);
+
+
+                    // View Details
+                    const detailsLink = document.createElement("a");
+
+                    detailsLink.href =
+                        "item-details.html?id=" +
+                        encodeURIComponent(item._id);
+
+                    detailsLink.className = "details-btn";
+
+                    detailsLink.textContent = "View Details";
+
+
+                    // Add common content
+                    content.appendChild(status);
+
+                    content.appendChild(heading);
+
+                    content.appendChild(description);
+
+                    content.appendChild(category);
+
+                    content.appendChild(location);
+
+                    content.appendChild(date);
+
+                    content.appendChild(detailsLink);
+
+
+                    // Edit and Delete buttons
+                    // Only displayed for the report owner
+                    if (isOwner(item)) {
+
+                        const actions = document.createElement("div");
+
+                        actions.className = "item-actions";
+
+
+                        // Edit button
+                        const editButton = document.createElement("button");
+
+                        editButton.type = "button";
+
+                        editButton.className = "edit-btn";
+
+                        editButton.textContent = "Edit";
+
+                        editButton.addEventListener("click", function () {
+
+                            window.location.href =
+                                "edit-item.html?id=" +
+                                encodeURIComponent(item._id);
+
+                        });
+
+
+                        // Delete button
+                        const deleteButton = document.createElement("button");
+
+                        deleteButton.type = "button";
+
+                        deleteButton.className = "delete-btn";
+
+                        deleteButton.textContent = "Delete";
+
+                        deleteButton.addEventListener("click", function () {
+
+                            deleteItem(item._id);
+
+                        });
+
+
+                        actions.appendChild(editButton);
+
+                        actions.appendChild(deleteButton);
+
+                        content.appendChild(actions);
+
+                    }
+
+
+                    // Add card to page
+                    card.appendChild(imageContainer);
+
+                    card.appendChild(content);
+
+                    itemsGrid.appendChild(card);
+
+                });
+
+            }
+
+
+            // Search and filter items
+            function filterItems() {
+
+                const searchText = searchInput.value
+                    .trim()
+                    .toLowerCase();
+
+                const selectedCategory = categoryFilter.value;
+
+                const selectedType = typeFilter.value;
+
+
+                const filteredItems = allItems.filter(function (item) {
+
+                    const matchesSearch =
+
+                        (item.itemName || "")
+                            .toLowerCase()
+                            .includes(searchText) ||
+
+                        (item.description || "")
+                            .toLowerCase()
+                            .includes(searchText) ||
+
+                        (item.location || "")
+                            .toLowerCase()
+                            .includes(searchText);
+
+
+                    const matchesCategory =
+
+                        selectedCategory === "all" ||
+
+                        item.category === selectedCategory;
+
+
+                    const matchesType =
+
+                        selectedType === "all" ||
+
+                        item.type === selectedType;
+
+
+                    return matchesSearch &&
+                        matchesCategory &&
+                        matchesType;
+
+                });
+
+
+                displayItems(filteredItems);
+
+            }
+
+
+            // Search button
+            searchButton.addEventListener("click", filterItems);
+
+
+            // Search while typing
+            searchInput.addEventListener("input", filterItems);
+
+
+            // Category filter
+            categoryFilter.addEventListener("change", filterItems);
+
+
+            // Type filter
+            typeFilter.addEventListener("change", filterItems);
+
+
+            // Retrieve items from MongoDB
+            async function fetchItems() {
+
+                try {
+
+                    const response = await fetch(API_URL);
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Unable to retrieve items from server."
+                        );
+
+                    }
+
+                    allItems = await response.json();
+
+                } catch (error) {
+
+                    console.error("Error loading items:", error);
+
+                    itemsGrid.innerHTML = "";
+
+                    noItemsMessage.textContent =
+                        "Unable to load items. Please check your server connection.";
+
+                    noItemsMessage.style.display = "block";
+
+                }
+
+            }
+
+
+            // Load items when page opens
+            async function loadPage() {
+
+                await fetchItems();
+
+                filterItems();
+
+            }
+
+            loadPage();
+
+        });
+
+    </script>
 
 </body>
-
 </html>
-

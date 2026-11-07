@@ -3,21 +3,17 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Report Found Item - CampusFind</title>
 
     <link rel="stylesheet" href="css/style.css">
-
 </head>
 
 <body>
 
     <!-- Navigation Bar -->
-
     <nav class="navbar">
 
         <div class="logo">
@@ -27,24 +23,29 @@
         <div class="nav-links">
 
             <a href="index.html">Home</a>
-
             <a href="items.html">Browse Items</a>
-
             <a href="report-lost.html">Report Lost</a>
-
             <a href="report-found.html">Report Found</a>
 
-            <a href="login.html" class="login-btn">
+            <a href="login.html" class="login-btn" id="loginLink">
                 Login
             </a>
+
+            <span id="userWelcome" style="display:none;"></span>
+
+            <button
+                id="logoutButton"
+                class="login-btn"
+                style="display:none; border:none; cursor:pointer;"
+            >
+                Logout
+            </button>
 
         </div>
 
     </nav>
 
-
     <!-- Page Header -->
-
     <section class="page-header">
 
         <h1>Report a Found Item</h1>
@@ -55,9 +56,7 @@
 
     </section>
 
-
     <!-- Found Item Form -->
-
     <section class="form-section">
 
         <div class="form-container">
@@ -68,17 +67,12 @@
                 Please provide accurate information about the item you found.
             </p>
 
-
             <form id="foundForm">
 
-
                 <!-- Item Name -->
-
                 <div class="form-group">
 
-                    <label for="itemName">
-                        Item Name
-                    </label>
+                    <label for="itemName">Item Name</label>
 
                     <input
                         type="text"
@@ -89,57 +83,29 @@
 
                 </div>
 
-
                 <!-- Category -->
-
                 <div class="form-group">
 
-                    <label for="category">
-                        Category
-                    </label>
+                    <label for="category">Category</label>
 
                     <select id="category" required>
 
-                        <option value="">
-                            Select a category
-                        </option>
-
-                        <option value="electronics">
-                            Electronics
-                        </option>
-
-                        <option value="documents">
-                            Documents
-                        </option>
-
-                        <option value="books">
-                            Books
-                        </option>
-
-                        <option value="bags">
-                            Bags
-                        </option>
-
-                        <option value="accessories">
-                            Accessories
-                        </option>
-
-                        <option value="others">
-                            Others
-                        </option>
+                        <option value="">Select a category</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="documents">Documents</option>
+                        <option value="books">Books</option>
+                        <option value="bags">Bags</option>
+                        <option value="accessories">Accessories</option>
+                        <option value="others">Others</option>
 
                     </select>
 
                 </div>
 
-
                 <!-- Description -->
-
                 <div class="form-group">
 
-                    <label for="description">
-                        Description
-                    </label>
+                    <label for="description">Description</label>
 
                     <textarea
                         id="description"
@@ -150,14 +116,10 @@
 
                 </div>
 
-
                 <!-- Date -->
-
                 <div class="form-group">
 
-                    <label for="foundDate">
-                        Date Found
-                    </label>
+                    <label for="foundDate">Date Found</label>
 
                     <input
                         type="date"
@@ -167,65 +129,31 @@
 
                 </div>
 
-
                 <!-- Location -->
-
                 <div class="form-group">
 
-                    <label for="location">
-                        Location Found
-                    </label>
+                    <label for="location">Location Found</label>
 
                     <select id="location" required>
 
-                        <option value="">
-                            Select location
-                        </option>
-
-                        <option value="library">
-                            Library
-                        </option>
-
-                        <option value="block-a">
-                            Block A
-                        </option>
-
-                        <option value="block-b">
-                            Block B
-                        </option>
-
-                        <option value="cse-lab">
-                            CSE Lab
-                        </option>
-
-                        <option value="cafeteria">
-                            Cafeteria
-                        </option>
-
-                        <option value="parking">
-                            Parking Area
-                        </option>
-
-                        <option value="auditorium">
-                            Auditorium
-                        </option>
-
-                        <option value="other">
-                            Other
-                        </option>
+                        <option value="">Select location</option>
+                        <option value="library">Library</option>
+                        <option value="block-a">Block A</option>
+                        <option value="block-b">Block B</option>
+                        <option value="cse-lab">CSE Lab</option>
+                        <option value="cafeteria">Cafeteria</option>
+                        <option value="parking">Parking Area</option>
+                        <option value="auditorium">Auditorium</option>
+                        <option value="other">Other</option>
 
                     </select>
 
                 </div>
 
-
                 <!-- Image -->
-
                 <div class="form-group">
 
-                    <label for="image">
-                        Upload Item Image
-                    </label>
+                    <label for="image">Upload Item Image</label>
 
                     <input
                         type="file"
@@ -234,19 +162,15 @@
                     >
 
                     <small>
-                        Upload a clear image of the found item if available.
+                        Upload a clear image of the found item if available. Maximum size: 3 MB.
                     </small>
 
                 </div>
 
-
                 <!-- Contact -->
-
                 <div class="form-group">
 
-                    <label for="contact">
-                        Your Contact Information
-                    </label>
+                    <label for="contact">Your Contact Information</label>
 
                     <input
                         type="text"
@@ -257,9 +181,7 @@
 
                 </div>
 
-
                 <!-- Buttons -->
-
                 <div class="form-buttons">
 
                     <a href="items.html" class="cancel-btn">
@@ -269,12 +191,12 @@
                     <button
                         type="submit"
                         class="submit-btn"
+                        id="submitButton"
                     >
                         Submit Found Report
                     </button>
 
                 </div>
-
 
             </form>
 
@@ -282,14 +204,10 @@
 
     </section>
 
-
     <!-- Footer -->
-
     <footer>
 
-        <h3>
-            CampusFind
-        </h3>
+        <h3>CampusFind</h3>
 
         <p>
             Smart Campus Lost & Found Management System
@@ -301,26 +219,183 @@
 
     </footer>
 
-
     <!-- JavaScript -->
-
     <script>
 
-        const foundForm = document.getElementById("foundForm");
+        document.addEventListener("DOMContentLoaded", function () {
 
-        foundForm.addEventListener("submit", function(event) {
+            // Check login status
+            const token = localStorage.getItem("token");
+            const user = JSON.parse(localStorage.getItem("user") || "null");
 
-            event.preventDefault();
+            const loginLink = document.getElementById("loginLink");
+            const logoutButton = document.getElementById("logoutButton");
+            const userWelcome = document.getElementById("userWelcome");
 
-            alert("Found item report submitted successfully!");
+            // Redirect if user is not logged in
+            if (!token || !user) {
 
-            foundForm.reset();
+                alert("Please login before reporting a found item.");
+
+                window.location.href = "login.html";
+
+                return;
+            }
+
+            // Display logged-in user's name
+            loginLink.style.display = "none";
+
+            logoutButton.style.display = "inline-block";
+
+            userWelcome.style.display = "inline-block";
+
+            userWelcome.textContent = "Welcome, " + user.name;
+
+            // Logout functionality
+            logoutButton.addEventListener("click", function () {
+
+                localStorage.removeItem("token");
+
+                localStorage.removeItem("user");
+
+                alert("You have logged out successfully!");
+
+                window.location.href = "index.html";
+
+            });
+
+            // Get form elements
+            const foundForm = document.getElementById("foundForm");
+
+            const submitButton = document.getElementById("submitButton");
+
+            // Convert image into Base64
+            function convertImageToBase64(file) {
+
+                return new Promise((resolve, reject) => {
+
+                    const reader = new FileReader();
+
+                    reader.onload = function () {
+                        resolve(reader.result);
+                    };
+
+                    reader.onerror = function () {
+                        reject(new Error("Could not read the uploaded image."));
+                    };
+
+                    reader.readAsDataURL(file);
+
+                });
+
+            }
+
+            // Submit found item report
+            foundForm.addEventListener("submit", async function (event) {
+
+                event.preventDefault();
+
+                const currentToken = localStorage.getItem("token");
+
+                if (!currentToken) {
+
+                    alert("Please login first!");
+
+                    window.location.href = "login.html";
+
+                    return;
+                }
+
+                try {
+
+                    submitButton.disabled = true;
+
+                    submitButton.textContent = "Submitting...";
+
+                    // Get uploaded image
+                    const imageFile = document.getElementById("image").files[0];
+
+                    let imageData = "";
+
+                    if (imageFile) {
+
+                        if (!imageFile.type.startsWith("image/")) {
+                            throw new Error("Please select a valid image.");
+                        }
+
+                        if (imageFile.size > 3 * 1024 * 1024) {
+                            throw new Error("Please upload an image smaller than 3 MB.");
+                        }
+
+                        imageData = await convertImageToBase64(imageFile);
+
+                    }
+
+                    // Collect form details
+                    const itemData = {
+
+                        itemName: document.getElementById("itemName").value.trim(),
+
+                        category: document.getElementById("category").value,
+
+                        description: document.getElementById("description").value.trim(),
+
+                        date: document.getElementById("foundDate").value,
+
+                        location: document.getElementById("location").value,
+
+                        image: imageData,
+
+                        contact: document.getElementById("contact").value.trim(),
+
+                        type: "found"
+
+                    };
+
+                    // Send report to backend
+                    const response = await fetch("http://localhost:5000/api/items", {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": "Bearer " + currentToken
+                        },
+
+                        body: JSON.stringify(itemData)
+
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message || "Failed to submit found item report.");
+                    }
+
+                    // Success message
+                    alert("Found item report saved successfully!");
+
+                    foundForm.reset();
+
+                } catch (error) {
+
+                    console.error("Found item submission error:", error);
+
+                    alert(error.message || "Could not connect to the server. Please try again.");
+
+                } finally {
+
+                    submitButton.disabled = false;
+
+                    submitButton.textContent = "Submit Found Report";
+
+                }
+
+            });
 
         });
 
     </script>
 
 </body>
-
 </html>
-

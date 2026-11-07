@@ -3,9 +3,7 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Item Details - CampusFind</title>
@@ -13,7 +11,6 @@
     <link rel="stylesheet" href="css/style.css">
 
     <style>
-
         .details-section {
             padding: 50px 20px;
         }
@@ -38,6 +35,14 @@
             background: #f1f3f6;
             border-radius: 10px;
             flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .details-image img {
+            width: 100%;
+            height: 100%;
+            min-height: 300px;
+            object-fit: contain;
         }
 
         .large-item-icon {
@@ -67,6 +72,7 @@
         .detail-info p {
             margin: 10px 0;
             line-height: 1.6;
+            overflow-wrap: anywhere;
         }
 
         .contact-box {
@@ -94,11 +100,18 @@
             margin-top: 20px;
         }
 
+        #loadingMessage,
+        #errorMessage {
+            text-align: center;
+            padding: 30px;
+        }
 
-        /* Mobile */
+        #errorMessage {
+            color: #b91c1c;
+            display: none;
+        }
 
         @media (max-width: 700px) {
-
             .details-container {
                 flex-direction: column;
                 padding: 25px;
@@ -113,6 +126,10 @@
                 min-height: 220px;
             }
 
+            .details-image img {
+                min-height: 220px;
+            }
+
             .large-item-icon {
                 font-size: 80px;
             }
@@ -120,18 +137,13 @@
             .details-content h2 {
                 font-size: 26px;
             }
-
         }
-
     </style>
-
 </head>
 
 <body>
 
-
     <!-- Navigation Bar -->
-
     <nav class="navbar">
 
         <div class="logo">
@@ -148,9 +160,15 @@
 
             <a href="report-found.html">Report Found</a>
 
-            <a href="login.html" class="login-btn">
+            <a href="login.html" class="login-btn" id="loginLink">
                 Login
             </a>
+
+            <span id="userWelcome"></span>
+
+            <button id="logoutButton" style="display:none;">
+                Logout
+            </button>
 
         </div>
 
@@ -158,7 +176,6 @@
 
 
     <!-- Page Header -->
-
     <section class="page-header">
 
         <h1>Item Details</h1>
@@ -170,73 +187,73 @@
     </section>
 
 
-    <!-- Item Details -->
+    <!-- Loading Message -->
+    <p id="loadingMessage">
+        Loading item details...
+    </p>
 
-    <section class="details-section">
+    <!-- Error Message -->
+    <p id="errorMessage"></p>
+
+
+    <!-- Item Details -->
+    <section class="details-section" id="detailsSection" style="display:none;">
 
         <div class="details-container">
 
-
             <!-- Image -->
+            <div class="details-image" id="itemImage">
 
-            <div class="details-image">
-
-                <div class="large-item-icon">
-                    📱
-                </div>
+                <div class="large-item-icon">📦</div>
 
             </div>
 
 
             <!-- Information -->
-
             <div class="details-content">
 
-                <span class="status lost">
-                    LOST
-                </span>
+                <span class="status" id="itemStatus"></span>
 
-                <h2>
-                    Black iPhone
-                </h2>
+                <h2 id="itemName"></h2>
 
-                <p class="details-description">
-                    Black iPhone with a transparent case.
-                    The phone was reported lost on campus.
-                </p>
+                <p class="details-description" id="itemDescription"></p>
 
 
                 <div class="detail-info">
 
                     <p>
                         <strong>Category:</strong>
-                        Electronics
+                        <span id="itemCategory"></span>
                     </p>
 
                     <p>
                         <strong>Location:</strong>
-                        Library
+                        <span id="itemLocation"></span>
                     </p>
 
                     <p>
-                        <strong>Date Lost:</strong>
-                        28 August 2026
+                        <strong id="dateLabel">Date:</strong>
+                        <span id="itemDate"></span>
                     </p>
 
                     <p>
                         <strong>Description:</strong>
-                        Black iPhone with a transparent case.
+                        <span id="fullDescription"></span>
+                    </p>
+
+                    <p>
+                        <strong>Contact:</strong>
+                        <span id="itemContact"></span>
                     </p>
 
                 </div>
 
 
                 <!-- Contact Box -->
-
                 <div class="contact-box">
 
-                    <h3>
-                        Found this item?
+                    <h3 id="contactHeading">
+                        Contact Owner
                     </h3>
 
                     <p>
@@ -247,8 +264,7 @@
                     <button
                         type="button"
                         class="submit-btn"
-                        onclick="contactOwner()"
-                    >
+                        id="contactButton">
                         Contact Owner
                     </button>
 
@@ -256,11 +272,7 @@
 
 
                 <!-- Back -->
-
-                <a
-                    href="items.html"
-                    class="cancel-btn"
-                >
+                <a href="items.html" class="cancel-btn">
                     ← Back to Browse Items
                 </a>
 
@@ -272,12 +284,9 @@
 
 
     <!-- Footer -->
-
     <footer>
 
-        <h3>
-            CampusFind
-        </h3>
+        <h3>CampusFind</h3>
 
         <p>
             Smart Campus Lost & Found Management System
@@ -291,18 +300,224 @@
 
 
     <!-- JavaScript -->
-
     <script>
 
-        function contactOwner() {
+        const API_URL = "http://localhost:5000/api/items";
 
-            alert("Contact request sent successfully!");
+        let currentContact = "";
+
+
+        // Navigation login status
+        const token = localStorage.getItem("token");
+        const user = JSON.parse(localStorage.getItem("user") || "null");
+
+        if (token && user) {
+
+            document.getElementById("loginLink").style.display = "none";
+
+            document.getElementById("userWelcome").textContent =
+                "Welcome, " + user.name;
+
+            document.getElementById("logoutButton").style.display =
+                "inline-block";
 
         }
+
+
+        // Logout
+        document.getElementById("logoutButton").addEventListener("click", function () {
+
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+
+            window.location.href = "index.html";
+
+        });
+
+
+        // Format date
+        function formatDate(dateValue) {
+
+            if (!dateValue) {
+                return "Not provided";
+            }
+
+            const date = new Date(dateValue);
+
+            if (isNaN(date.getTime())) {
+                return "Not available";
+            }
+
+            return date.toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric"
+            });
+
+        }
+
+
+        // Display item details
+        async function loadItemDetails() {
+
+            const loadingMessage =
+                document.getElementById("loadingMessage");
+
+            const errorMessage =
+                document.getElementById("errorMessage");
+
+            const detailsSection =
+                document.getElementById("detailsSection");
+
+            try {
+
+                // Get item ID from URL
+                const params = new URLSearchParams(window.location.search);
+
+                const itemId = params.get("id");
+
+                if (!itemId) {
+                    throw new Error("Item ID is missing. Please select an item from Browse Items.");
+                }
+
+
+                // Fetch item from backend
+                const response = await fetch(`${API_URL}/${encodeURIComponent(itemId)}`);
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Unable to load item details.");
+                }
+
+
+                const item = data;
+
+
+                // Display item image
+                const imageContainer =
+                    document.getElementById("itemImage");
+
+                imageContainer.innerHTML = "";
+
+                if (item.image) {
+
+                    const image = document.createElement("img");
+
+                    image.src = item.image;
+                    image.alt = item.itemName || "Reported item";
+
+                    image.onerror = function () {
+                        imageContainer.innerHTML =
+                            '<div class="large-item-icon">📦</div>';
+                    };
+
+                    imageContainer.appendChild(image);
+
+                } else {
+
+                    imageContainer.innerHTML =
+                        '<div class="large-item-icon">📦</div>';
+
+                }
+
+
+                // Display status
+                const statusElement =
+                    document.getElementById("itemStatus");
+
+                statusElement.textContent = (item.type || "unknown").toUpperCase();
+
+                statusElement.className =
+                    "status " + (item.type === "found" ? "found" : "lost");
+
+
+                // Display item information
+                document.getElementById("itemName").textContent =
+                    item.itemName || "Unnamed item";
+
+                document.getElementById("itemDescription").textContent =
+                    item.description || "No description available.";
+
+                document.getElementById("fullDescription").textContent =
+                    item.description || "Not provided";
+
+                document.getElementById("itemCategory").textContent =
+                    item.category || "Not provided";
+
+                document.getElementById("itemLocation").textContent =
+                    item.location || "Not provided";
+
+                document.getElementById("itemDate").textContent =
+                    formatDate(item.date);
+
+                document.getElementById("dateLabel").textContent =
+                    item.type === "found" ? "Date Found:" : "Date Lost:";
+
+                currentContact = item.contact || "";
+
+                document.getElementById("itemContact").textContent =
+                    currentContact || "Not provided";
+
+                document.getElementById("contactHeading").textContent =
+                    item.type === "found"
+                        ? "Know who owns this item?"
+                        : "Found this item?";
+
+
+                // Show details
+                loadingMessage.style.display = "none";
+
+                detailsSection.style.display = "block";
+
+            } catch (error) {
+
+                loadingMessage.style.display = "none";
+
+                errorMessage.textContent = error.message;
+
+                errorMessage.style.display = "block";
+
+            }
+
+        }
+
+
+        // Contact the person who reported the item
+        document.getElementById("contactButton").addEventListener("click", function () {
+
+            if (!currentContact) {
+
+                alert("Contact information is not available.");
+
+                return;
+
+            }
+
+            const contact = currentContact.trim();
+
+            if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)) {
+
+                window.location.href = "mailto:" + contact;
+
+            } else if (/^[+0-9()\s-]+$/.test(contact)) {
+
+                window.location.href = "tel:" + contact.replace(/[^\d+]/g, "");
+
+            } else {
+
+                alert("Please use this contact information: " + contact);
+
+            }
+
+        });
+
+
+        // Load details when page opens
+        loadItemDetails();
 
     </script>
 
 </body>
 
 </html>
-

@@ -1,10 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampusFind - Lost & Found</title>
-
+    <title>Campus Finding System</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -12,7 +12,6 @@
 
     <!-- Navigation Bar -->
     <nav class="navbar">
-
         <div class="logo">
             CampusFind
         </div>
@@ -22,15 +21,22 @@
             <a href="items.html">Browse Items</a>
             <a href="report-lost.html">Report Lost</a>
             <a href="report-found.html">Report Found</a>
-            <a href="login.html" class="login-btn">Login</a>
+
+            <span id="userWelcome" style="display:none;"></span>
+
+            <a href="login.html" class="login-btn" id="loginLink">
+                Login
+            </a>
+
+            <button id="logoutButton" class="login-btn"
+                style="display:none; border:none; cursor:pointer;">
+                Logout
+            </button>
         </div>
-
     </nav>
-
 
     <!-- Hero Section -->
     <section class="hero">
-
         <div class="hero-content">
 
             <h1>Find What You Lost.<br>Return What You Found.</h1>
@@ -52,9 +58,7 @@
             </div>
 
         </div>
-
     </section>
-
 
     <!-- How It Works -->
     <section class="how-it-works">
@@ -95,24 +99,40 @@
             </div>
 
         </div>
-
     </section>
-
 
     <!-- Footer -->
     <footer>
-
         <h3>CampusFind</h3>
-
-        <p>
-            Smart Campus Lost & Found Management System
-        </p>
-
-        <p>
-            © 2026 CampusFind. All Rights Reserved.
-        </p>
-
+        <p>Smart Campus Lost & Found Management System</p>
+        <p>© 2026 CampusFind. All Rights Reserved.</p>
     </footer>
 
-</body>
+    <!-- Login and Logout Functionality -->
+    <script>
+        const token = localStorage.getItem("token");
+        const user = JSON.parse(localStorage.getItem("user") || "null");
 
+        const loginLink = document.getElementById("loginLink");
+        const logoutButton = document.getElementById("logoutButton");
+        const userWelcome = document.getElementById("userWelcome");
+
+        if (token && user) {
+            loginLink.style.display = "none";
+            logoutButton.style.display = "inline-block";
+            userWelcome.style.display = "inline-block";
+            userWelcome.textContent = "Welcome, " + user.name;
+        }
+
+        logoutButton.addEventListener("click", function() {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+
+            alert("You have logged out successfully!");
+
+            window.location.href = "index.html";
+        });
+    </script>
+
+</body>
+</html>
