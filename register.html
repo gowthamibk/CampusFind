@@ -1,0 +1,437 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - CampusFind</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7ff;
+            color: #243453;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 8%;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            color: #4169f5;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #344563;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #5b5bf7;
+        }
+
+        .nav-links .login-btn {
+            background: linear-gradient(135deg, #4965f5, #8052e8);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 12px;
+        }
+
+        .login-section {
+            min-height: 75vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 460px;
+            padding: 38px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 12px 35px rgba(44, 62, 120, 0.12);
+        }
+
+        .login-container h1 {
+            text-align: center;
+            font-size: 32px;
+            margin: 0 0 10px;
+            color: #243453;
+        }
+
+        .login-description {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 28px;
+        }
+
+        .register-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .register-message.error {
+            color: #b91c1c;
+            background: #fee2e2;
+        }
+
+        .register-message.success {
+            color: #166534;
+            background: #dcfce7;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #344563;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #d8deed;
+            border-radius: 10px;
+            outline: none;
+            font-size: 15px;
+            background: #ffffff;
+            color: #243453;
+            transition: 0.25s;
+        }
+
+        .form-group input:focus {
+            border-color: #5968f5;
+            box-shadow: 0 0 0 3px rgba(89, 104, 245, 0.12);
+        }
+
+        .form-group input::placeholder {
+            color: #a0aec0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4965f5, #8052e8);
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(73, 101, 245, 0.25);
+        }
+
+        #registerButton:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .register-text {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 14px;
+            color: #718096;
+        }
+
+        .register-text a {
+            color: #5b5bf7;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 45px 20px;
+            background: linear-gradient(135deg, #30469b, #6345b9);
+            color: white;
+        }
+
+        footer h3 {
+            font-size: 25px;
+            margin-bottom: 12px;
+        }
+
+        footer p {
+            font-size: 14px;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 700px) {
+            .navbar {
+                justify-content: center;
+            }
+
+            .nav-links {
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .login-container {
+                padding: 25px;
+            }
+
+            .login-container h1 {
+                font-size: 27px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">CampusFind ✦</div>
+
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="items.html">Browse Items</a>
+            <a href="report-lost.html">Report Lost</a>
+            <a href="report-found.html">Report Found</a>
+            <a href="login.html" class="login-btn">Login</a>
+        </div>
+    </nav>
+
+    <section class="login-section">
+        <div class="login-container">
+
+            <h1>Create Account</h1>
+
+            <p class="login-description">
+                Create your CampusFind account
+            </p>
+
+            <div id="registerMessage" class="register-message"></div>
+
+            <form id="registerForm">
+
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input
+                        type="text"
+                        id="name"
+                        placeholder="Enter your full name"
+                        autocomplete="name"
+                        maxlength="100"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Create a password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        placeholder="Confirm your password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+                </div>
+
+                <button
+                    type="submit"
+                    class="submit-btn login-submit"
+                    id="registerButton"
+                >
+                    Create Account
+                </button>
+
+                <p class="register-text">
+                    Already have an account?
+                    <a href="login.html">Login</a>
+                </p>
+
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <h3>CampusFind</h3>
+        <p>Smart Campus Lost &amp; Found Management System</p>
+        <p>© 2026 CampusFind. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+
+        // Redirect already logged-in users
+        const existingToken = localStorage.getItem("token");
+        const existingUser = localStorage.getItem("user");
+
+        if (existingToken && existingUser) {
+            try {
+                const user = JSON.parse(existingUser);
+
+                if (user.role === "admin") {
+                    window.location.replace("admin.html");
+                } else {
+                    window.location.replace("index.html");
+                }
+
+            } catch (error) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+            }
+        }
+
+        const registerForm = document.getElementById("registerForm");
+        const registerButton = document.getElementById("registerButton");
+        const registerMessage = document.getElementById("registerMessage");
+
+        function showRegisterMessage(message, type) {
+            registerMessage.textContent = message;
+            registerMessage.className = "register-message " + type;
+            registerMessage.style.display = "block";
+        }
+
+        registerForm.addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+            registerMessage.style.display = "none";
+
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (!name) {
+                showRegisterMessage("Please enter your full name.", "error");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showRegisterMessage("Passwords do not match.", "error");
+                return;
+            }
+
+            if (password.length < 6) {
+                showRegisterMessage("Password must be at least 6 characters.", "error");
+                return;
+            }
+
+            try {
+
+                registerButton.disabled = true;
+                registerButton.textContent = "Creating Account...";
+
+                const response = await fetch(
+                    "https://campusfind-cl7z.onrender.com/api/auth/register",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            name: name,
+                            email: email,
+                            password: password
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showRegisterMessage(
+                        data.message || "Registration failed.",
+                        "error"
+                    );
+                    return;
+                }
+
+                showRegisterMessage(
+                    "Registration successful! Redirecting to login...",
+                    "success"
+                );
+
+                registerForm.reset();
+
+                setTimeout(function() {
+                    window.location.href = "login.html";
+                }, 1500);
+
+            } catch (error) {
+
+                console.error("Registration Error:", error);
+
+                showRegisterMessage(
+                    "Cannot connect to server. Please check whether your backend is running.",
+                    "error"
+                );
+
+            } finally {
+
+                registerButton.disabled = false;
+                registerButton.textContent = "Create Account";
+
+            }
+
+        });
+
+    </script>
+
+</body>
+</html>

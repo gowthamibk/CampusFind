@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Claims | CampusFind</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .notification-nav {
+            position: relative;
+        }
+
+        .notification-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 5px;
+            border-radius: 50px;
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .claims-page {
+            min-height: 75vh;
+            padding: 45px 20px 70px;
+            background:
+                radial-gradient(circle at 5% 5%, #e0eaff, transparent 30%),
+                radial-gradient(circle at 95% 90%, #eee5ff, transparent 30%),
+                #f7f9ff;
+        }
+
+        .claims-container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .claims-heading {
+            margin-bottom: 30px;
+        }
+
+        .claims-heading h2 {
+            color: #193675;
+            font-size: 29px;
+        }
+
+        .claims-heading p {
+            color: #71809b;
+            margin-top: 7px;
+        }
+
+        .claims-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 35px;
+        }
+
+        .claim-stat {
+            padding: 24px;
+            border-radius: 18px;
+            color: white;
+            box-shadow: 0 10px 25px rgba(31,58,120,.12);
+            transition: .25s ease;
+        }
+
+        .claim-stat:hover {
+            transform: translateY(-5px);
+        }
+
+        .claim-stat:nth-child(1) {
+            background: linear-gradient(135deg,#3269ed,#1741a5);
+        }
+
+        .claim-stat:nth-child(2) {
+            background: linear-gradient(135deg,#f5ad38,#e17b17);
+        }
+
+        .claim-stat:nth-child(3) {
+            background: linear-gradient(135deg,#16b99a,#087e91);
+        }
+
+        .claim-stat:nth-child(4) {
+            background: linear-gradient(135deg,#e75c77,#bd315c);
+        }
+
+        .claim-stat span {
+            display: block;
+            font-size: 14px;
+            opacity: .9;
+            margin-bottom: 10px;
+        }
+
+        .claim-stat strong {
+            font-size: 34px;
+        }
+
+        .claims-toolbar {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .claims-toolbar input,
+        .claims-toolbar select {
+            min-height: 47px;
+            padding: 12px 15px;
+            border: 1px solid #dce3ef;
+            border-radius: 10px;
+            background: white;
+            font-size: 14px;
+        }
+
+        .claims-toolbar input {
+            flex: 1;
+        }
+
+        .claims-grid {
+            display: grid;
+            grid-template-columns: repeat(2,minmax(0,1fr));
+            gap: 22px;
+        }
+
+        .claim-card {
+            display: flex;
+            overflow: hidden;
+            background: white;
+            border: 1px solid #e4e9f2;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(30,64,130,.06);
+            transition: .25s ease;
+        }
+
+        .claim-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(30,64,130,.12);
+        }
+
+        .claim-card-image {
+            width: 150px;
+            min-width: 150px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg,#eaf0ff,#dce7ff);
+            color: #4778d8;
+            font-size: 50px;
+        }
+
+        .claim-card-image img {
+            width: 100%;
+            height: 100%;
+            min-height: 200px;
+            object-fit: cover;
+        }
+
+        .claim-card-content {
+            flex: 1;
+            min-width: 0;
+            padding: 21px;
+        }
+
+        .claim-card-content h3 {
+            color: #193675;
+            margin: 12px 0;
+            font-size: 19px;
+        }
+
+        .claim-card-content p {
+            color: #71809b;
+            font-size: 13px;
+            line-height: 1.7;
+            margin: 7px 0;
+        }
+
+        .claim-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 850;
+            text-transform: uppercase;
+        }
+
+        .claim-status.pending {
+            color: #a66a12;
+            background: #fff3d7;
+        }
+
+        .claim-status.approved {
+            color: #087e66;
+            background: #ddf8ec;
+        }
+
+        .claim-status.rejected {
+            color: #c2414b;
+            background: #fff0f0;
+        }
+
+        .claim-view-btn {
+            display: inline-block;
+            margin-top: 14px;
+            padding: 9px 15px;
+            border-radius: 9px;
+            color: white;
+            background: linear-gradient(135deg,#3269ed,#633ed0);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        #claimsMessage {
+            padding: 25px;
+            color: #71809b;
+            text-align: center;
+        }
+
+        @media(max-width: 850px) {
+            .claims-stats {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+            .claims-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 550px) {
+            .claims-toolbar {
+                flex-direction: column;
+            }
+
+            .claim-card {
+                flex-direction: column;
+            }
+
+            .claim-card-image {
+                width: 100%;
+                height: 190px;
+            }
+
+            .claim-card-image img {
+                height: 190px;
+                min-height: 190px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="logo">CampusFind</div>
+
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="items.html">Browse Items</a>
+        <a href="report-lost.html">Report Lost</a>
+        <a href="report-found.html">Report Found</a>
+        <a href="my-reports.html">My Reports</a>
+        <a href="my-claims.html">My Claims</a>
+        <a href="received-claims.html">Received Claims</a>
+        <a href="notifications.html" class="notification-nav">
+            Notifications <span id="notificationBadge" class="notification-badge" style="display:none;">0</span>
+        </a>
+        <button class="login-btn" id="logoutButton">Logout</button>
+    </div>
+</nav>
+
+<header class="page-header">
+    <h1>My Claims</h1>
+    <p>Track the status of items you have requested to claim.</p>
+</header>
+
+<main class="claims-page">
+
+    <div class="claims-container">
+
+        <div class="claims-heading">
+            <h2>Your Claim Activity 📋</h2>
+            <p>Keep track of your lost belongings and claim requests.</p>
+        </div>
+
+        <div class="claims-stats">
+
+            <div class="claim-stat">
+                <span>📊 Total Claims</span>
+                <strong id="totalClaims">0</strong>
+            </div>
+
+            <div class="claim-stat">
+                <span>⏳ Pending</span>
+                <strong id="pendingClaims">0</strong>
+            </div>
+
+            <div class="claim-stat">
+                <span>✅ Approved</span>
+                <strong id="approvedClaims">0</strong>
+            </div>
+
+            <div class="claim-stat">
+                <span>❌ Rejected</span>
+                <strong id="rejectedClaims">0</strong>
+            </div>
+
+        </div>
+
+        <div class="claims-toolbar">
+
+            <input
+                type="search"
+                id="claimSearch"
+                placeholder="Search your claims..."
+            >
+
+            <select id="claimStatusFilter">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+            </select>
+
+        </div>
+
+        <div id="claimsMessage">Loading your claims...</div>
+
+        <div class="claims-grid" id="claimsGrid"></div>
+
+    </div>
+
+</main>
+
+<footer>
+    <h3>CampusFind</h3>
+    <p>Smart Campus Lost &amp; Found Management System</p>
+    <p>© 2026 CampusFind. All Rights Reserved.</p>
+</footer>
+
+<script>
+const API = "https://campusfind-cl7z.onrender.com/api/claims";
+const NOTIFICATION_API = "https://campusfind-cl7z.onrender.com/api/notifications";
+const token = localStorage.getItem("token");
+
+let claims = [];
+
+if (!token) {
+    alert("Please login first.");
+    window.location.href = "login.html";
+}
+
+document.getElementById("logoutButton").addEventListener("click", () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+});
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[char]);
+}
+
+function formatDate(value) {
+    if (!value) return "Date unavailable";
+
+    const date = new Date(value);
+
+    if (isNaN(date.getTime())) return "Date unavailable";
+
+    return date.toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+    });
+}
+
+async function loadNotificationCount() {
+    try {
+        const response = await fetch(`${NOTIFICATION_API}/unread-count`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+        const badge = document.getElementById("notificationBadge");
+        const count = Number(data.count || data.unreadCount || 0);
+
+        if (count > 0) {
+            badge.textContent = count > 99 ? "99+" : count;
+            badge.style.display = "inline-flex";
+        } else {
+            badge.style.display = "none";
+        }
+
+    } catch (error) {
+        console.error("Notification count error:", error);
+    }
+}
+
+async function loadClaims() {
+    try {
+        const response = await fetch(`${API}/mine`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Unable to load claims");
+        }
+
+        claims = data;
+
+        updateStatistics();
+        displayClaims();
+
+    } catch (error) {
+        document.getElementById("claimsMessage").textContent =
+            error.message;
+    }
+}
+
+function updateStatistics() {
+    document.getElementById("totalClaims").textContent =
+        claims.length;
+
+    document.getElementById("pendingClaims").textContent =
+        claims.filter(c => c.status === "pending").length;
+
+    document.getElementById("approvedClaims").textContent =
+        claims.filter(c => c.status === "approved").length;
+
+    document.getElementById("rejectedClaims").textContent =
+        claims.filter(c => c.status === "rejected").length;
+}
+
+function displayClaims() {
+    const grid = document.getElementById("claimsGrid");
+
+    const search = document.getElementById("claimSearch")
+        .value.trim().toLowerCase();
+
+    const statusFilter =
+        document.getElementById("claimStatusFilter").value;
+
+    const filtered = claims.filter(claim => {
+        const item = claim.item || {};
+
+        const matchesSearch =
+            String(item.itemName || "").toLowerCase().includes(search) ||
+            String(claim.message || "").toLowerCase().includes(search);
+
+        const matchesStatus =
+            statusFilter === "all" || claim.status === statusFilter;
+
+        return matchesSearch && matchesStatus;
+    });
+
+    grid.innerHTML = "";
+
+    if (filtered.length === 0) {
+        document.getElementById("claimsMessage").textContent =
+            claims.length
+                ? "No claims match your filters."
+                : "You haven't submitted any claims yet.";
+
+        return;
+    }
+
+    document.getElementById("claimsMessage").textContent = "";
+
+    filtered.forEach(claim => {
+        const item = claim.item || {};
+        const card = document.createElement("article");
+        card.className = "claim-card";
+
+        const imageArea = document.createElement("div");
+        imageArea.className = "claim-card-image";
+
+        if (item.image) {
+            const image = document.createElement("img");
+            image.src = item.image;
+            image.alt = item.itemName || "Claimed item";
+            imageArea.appendChild(image);
+        } else {
+            imageArea.textContent = "📦";
+        }
+
+        const content = document.createElement("div");
+        content.className = "claim-card-content";
+
+        const badge = document.createElement("span");
+        badge.className = "claim-status " + claim.status;
+        badge.textContent = claim.status;
+
+        const heading = document.createElement("h3");
+        heading.textContent = item.itemName || "Item unavailable";
+
+        const location = document.createElement("p");
+        location.textContent = "📍 " + (item.location || "Unknown location");
+
+        const message = document.createElement("p");
+        message.textContent = "Your explanation: " + (claim.message || "");
+
+        const date = document.createElement("p");
+        date.textContent = "📅 Submitted: " + formatDate(claim.createdAt);
+
+        const viewLink = document.createElement("a");
+        viewLink.className = "claim-view-btn";
+        viewLink.href = item._id
+            ? "item-details.html?id=" + encodeURIComponent(item._id)
+            : "items.html";
+        viewLink.textContent = "View Item →";
+
+        content.appendChild(badge);
+        content.appendChild(heading);
+        content.appendChild(location);
+        content.appendChild(message);
+        content.appendChild(date);
+        content.appendChild(viewLink);
+
+        card.appendChild(imageArea);
+        card.appendChild(content);
+
+        grid.appendChild(card);
+    });
+}
+
+document.getElementById("claimSearch")
+    .addEventListener("input", displayClaims);
+
+document.getElementById("claimStatusFilter")
+    .addEventListener("change", displayClaims);
+
+if (token) {
+    loadClaims();
+    loadNotificationCount();
+}
+</script>
+
+</body>
+</html>

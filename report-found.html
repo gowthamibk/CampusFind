@@ -1,0 +1,1020 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Found Item | CampusFind</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #263858;
+            background: #f3faf8;
+        }
+
+        /* NAVIGATION */
+
+        .navbar {
+            min-height: 76px;
+            padding: 12px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            background: white;
+            box-shadow: 0 5px 25px rgba(25,90,80,.08);
+            position: relative;
+            z-index: 5;
+        }
+
+        .logo {
+            color: #087e91;
+            font-size: 25px;
+            font-weight: 900;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .logo::after {
+            content: " ✦";
+            color: #17bda5;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 19px;
+        }
+
+        .nav-links a {
+            color: #43516e;
+            font-size: 13px;
+            font-weight: 750;
+            white-space: nowrap;
+            text-decoration: none;
+            transition: .25s;
+        }
+
+        .nav-links a:hover {
+            color: #0a9b87;
+        }
+
+        #userWelcome {
+            color: #087e91;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .login-btn {
+            padding: 11px 20px;
+            border: none;
+            border-radius: 11px;
+            color: white !important;
+            background: linear-gradient(120deg,#0aa995,#087e91);
+            font-weight: 750;
+            cursor: pointer;
+            box-shadow: 0 7px 18px rgba(8,126,145,.2);
+            transition: .25s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        /* NOTIFICATION BADGE */
+
+        .notification-link {
+            position: relative;
+        }
+
+        .notification-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 19px;
+            height: 19px;
+            padding: 0 5px;
+            margin-left: 4px;
+            border-radius: 50px;
+            color: white;
+            background: #ef5364;
+            font-size: 10px;
+            font-weight: 900;
+            vertical-align: middle;
+        }
+
+        .notification-badge.hidden {
+            display: none;
+        }
+
+        /* PAGE HEADER */
+
+        .page-header {
+            padding: 65px 20px 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 10% 90%,rgba(35,205,160,.20),transparent 35%),
+                radial-gradient(circle at 90% 10%,rgba(65,180,210,.25),transparent 35%),
+                linear-gradient(120deg,#e5faf2,#e6f7ff);
+        }
+
+        .page-header::before {
+            content: "🎒";
+            position: absolute;
+            font-size: 115px;
+            right: 10%;
+            top: 5px;
+            opacity: .12;
+            transform: rotate(12deg);
+        }
+
+        .page-tag {
+            display: inline-block;
+            padding: 8px 18px;
+            margin-bottom: 15px;
+            border: 1px solid #c9eee3;
+            border-radius: 30px;
+            color: #07816e;
+            background: rgba(255,255,255,.85);
+            font-size: 11px;
+            font-weight: 850;
+            letter-spacing: 1px;
+        }
+
+        .page-header h1 {
+            position: relative;
+            color: #075d58;
+            font-size: clamp(32px,4vw,45px);
+            font-weight: 900;
+            margin: 0 0 12px;
+        }
+
+        .page-header p {
+            position: relative;
+            color: #65867f;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        /* FORM SECTION */
+
+        .form-section {
+            padding: 0 20px 75px;
+            margin-top: -40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-container {
+            max-width: 850px;
+            margin: auto;
+            padding: 38px 45px;
+            background: white;
+            border: 1px solid #dcefe9;
+            border-radius: 25px;
+            box-shadow: 0 18px 50px rgba(25,90,80,.10);
+        }
+
+        .form-top {
+            display: flex;
+            align-items: center;
+            gap: 17px;
+            padding-bottom: 24px;
+            margin-bottom: 28px;
+            border-bottom: 1px solid #e8f3ef;
+        }
+
+        .form-icon {
+            width: 65px;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 19px;
+            background: linear-gradient(135deg,#13bda5,#087e91);
+            box-shadow: 0 9px 20px rgba(8,126,145,.2);
+            font-size: 31px;
+        }
+
+        .form-top h2 {
+            margin: 0 0 5px;
+            color: #075d58;
+            font-size: 25px;
+            font-weight: 900;
+        }
+
+        .form-top p {
+            margin: 0;
+            color: #879b98;
+            font-size: 13px;
+        }
+
+        .form-description {
+            margin: 0 0 28px;
+            padding: 13px 16px;
+            border-radius: 12px;
+            color: #267c70;
+            background: #eaf9f3;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        /* FORM GRID */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2,minmax(0,1fr));
+            gap: 22px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            min-width: 0;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            color: #285d59;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .required {
+            color: #e45b6c;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            min-height: 49px;
+            padding: 13px 15px;
+            border: 1px solid #d9eae5;
+            border-radius: 11px;
+            background: #f8fcfa;
+            color: #344e4a;
+            font-size: 14px;
+            font-family: inherit;
+            transition: .25s;
+        }
+
+        .form-group textarea {
+            min-height: 125px;
+            resize: vertical;
+            line-height: 1.7;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #13a995;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(19,169,149,.10);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #a0b5ae;
+        }
+
+        .field-hint {
+            color: #91a49e;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        /* IMAGE UPLOAD */
+
+        .upload-box {
+            padding: 24px;
+            border: 2px dashed #a9dfd0;
+            border-radius: 16px;
+            text-align: center;
+            background: linear-gradient(135deg,#f0fbf6,#eefaff);
+            transition: .25s;
+        }
+
+        .upload-box:hover {
+            border-color: #0ba88f;
+            background: #eafaf4;
+        }
+
+        .upload-icon {
+            font-size: 38px;
+            margin-bottom: 8px;
+        }
+
+        .upload-box p {
+            margin: 0 0 12px;
+            color: #5c8178;
+            font-size: 13px;
+        }
+
+        .upload-box input {
+            max-width: 100%;
+            padding: 9px;
+            background: white;
+        }
+
+        #imagePreview {
+            display: none;
+            width: 180px;
+            height: 150px;
+            margin: 18px auto 0;
+            object-fit: cover;
+            border-radius: 13px;
+            border: 3px solid white;
+            box-shadow: 0 5px 18px rgba(25,90,80,.15);
+        }
+
+        /* BUTTONS */
+
+        .form-buttons {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 14px;
+            margin-top: 32px;
+            padding-top: 25px;
+            border-top: 1px solid #e8f3ef;
+        }
+
+        .cancel-btn,
+        .submit-btn {
+            min-height: 48px;
+            padding: 13px 24px;
+            border-radius: 11px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            transition: .25s;
+        }
+
+        .cancel-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #657f78;
+            background: #eff6f3;
+            border: 1px solid #dcebe5;
+        }
+
+        .cancel-btn:hover {
+            color: #087e91;
+            background: #e4f5ee;
+        }
+
+        .submit-btn {
+            color: white;
+            border: none;
+            background: linear-gradient(120deg,#13bda5,#087e91);
+            box-shadow: 0 8px 20px rgba(8,126,145,.23);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(8,126,145,.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: .65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* FOOTER */
+
+        footer {
+            padding: 42px 20px;
+            text-align: center;
+            color: white;
+            background:
+                radial-gradient(circle at 10% 10%,rgba(65,210,175,.25),transparent 35%),
+                linear-gradient(120deg,#075d58,#087e91,#16a58d);
+        }
+
+        footer h3 {
+            font-size: 27px;
+            margin: 0 0 8px;
+        }
+
+        footer p {
+            color: rgba(255,255,255,.85);
+            font-size: 13px;
+            margin: 6px 0;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width:950px) {
+            .navbar {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-links {
+                justify-content: center;
+            }
+        }
+
+        @media(max-width:650px) {
+            .navbar {
+                flex-direction: column;
+            }
+
+            .nav-links {
+                gap: 13px;
+            }
+
+            .page-header {
+                padding: 50px 18px 65px;
+            }
+
+            .form-container {
+                padding: 25px 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: auto;
+            }
+
+            .form-top h2 {
+                font-size: 21px;
+            }
+
+            .form-buttons {
+                flex-direction: column-reverse;
+            }
+
+            .cancel-btn,
+            .submit-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVIGATION -->
+
+    <nav class="navbar">
+
+        <a href="index.html" class="logo">CampusFind</a>
+
+        <div class="nav-links">
+            <a href="index.html">🏠 Home</a>
+            <a href="items.html">🔍 Browse Items</a>
+            <a href="report-lost.html">📍 Report Lost</a>
+            <a href="report-found.html">🎒 Report Found</a>
+            <a href="my-reports.html">📋 My Reports</a>
+            <a href="my-claims.html">📩 My Claims</a>
+            <a href="received-claims.html">📬 Received Claims</a>
+
+            <a href="notifications.html" class="notification-link">
+                🔔 Notifications
+                <span id="notificationBadge" class="notification-badge hidden">0</span>
+            </a>
+
+            <a href="login.html" class="login-btn" id="loginLink">Login</a>
+
+            <span id="userWelcome" style="display:none;"></span>
+
+            <button id="logoutButton" class="login-btn"
+                style="display:none;" type="button">
+                Logout
+            </button>
+        </div>
+
+    </nav>
+
+    <!-- PAGE HEADER -->
+
+    <section class="page-header">
+
+        <div class="page-tag">✦ CAMPUSFIND FOUND ITEM ASSISTANCE</div>
+
+        <h1>Found Something? Be a Hero! 💚</h1>
+
+        <p>
+            Your small act of kindness could help someone recover something important.
+        </p>
+
+    </section>
+
+    <!-- FORM SECTION -->
+
+    <section class="form-section">
+
+        <div class="form-container">
+
+            <div class="form-top">
+
+                <div class="form-icon">🎒</div>
+
+                <div>
+                    <h2>Report a Found Item</h2>
+                    <p>Share the details so its rightful owner can find it.</p>
+                </div>
+
+            </div>
+
+            <p class="form-description">
+                💡 <strong>Helpful tip:</strong>
+                Describe where you found the item and add a clear photograph
+                if possible. This makes it easier for the owner to recognise it.
+            </p>
+
+            <form id="foundForm">
+
+                <div class="form-grid">
+
+                    <!-- ITEM NAME -->
+
+                    <div class="form-group">
+                        <label for="itemName">
+                            🎒 Item Name <span class="required">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="itemName"
+                            placeholder="Example: Blue Backpack"
+                            required
+                        >
+                    </div>
+
+                    <!-- CATEGORY -->
+
+                    <div class="form-group">
+                        <label for="category">
+                            🏷️ Category <span class="required">*</span>
+                        </label>
+
+                        <select id="category" required>
+                            <option value="">Select a category</option>
+                            <option value="electronics">📱 Electronics</option>
+                            <option value="documents">🪪 Documents</option>
+                            <option value="books">📚 Books</option>
+                            <option value="bags">🎒 Bags</option>
+                            <option value="accessories">⌚ Accessories</option>
+                            <option value="others">📦 Others</option>
+                        </select>
+                    </div>
+
+                    <!-- DESCRIPTION -->
+
+                    <div class="form-group full-width">
+                        <label for="description">
+                            📝 Item Description <span class="required">*</span>
+                        </label>
+
+                        <textarea
+                            id="description"
+                            rows="5"
+                            placeholder="Describe the item's colour, brand, size, identifying marks, etc."
+                            required
+                        ></textarea>
+
+                        <span class="field-hint">
+                            Include details that can help the owner identify their belongings.
+                        </span>
+                    </div>
+
+                    <!-- DATE -->
+
+                    <div class="form-group">
+                        <label for="foundDate">
+                            📅 Date Found <span class="required">*</span>
+                        </label>
+
+                        <input
+                            type="date"
+                            id="foundDate"
+                            required
+                        >
+                    </div>
+
+                    <!-- LOCATION -->
+
+                    <div class="form-group">
+                        <label for="location">
+                            📍 Location Found <span class="required">*</span>
+                        </label>
+
+                        <select id="location" required>
+                            <option value="">Select location</option>
+                            <option value="library">📚 Library</option>
+                            <option value="block-a">🏢 Block A</option>
+                            <option value="block-b">🏢 Block B</option>
+                            <option value="cse-lab">💻 CSE Lab</option>
+                            <option value="cafeteria">🍔 Cafeteria</option>
+                            <option value="parking">🏍️ Parking Area</option>
+                            <option value="auditorium">🎭 Auditorium</option>
+                            <option value="other">📌 Other</option>
+                        </select>
+                    </div>
+
+                    <!-- IMAGE UPLOAD -->
+
+                    <div class="form-group full-width">
+
+                        <label for="image">
+                            📸 Upload Item Image
+                        </label>
+
+                        <div class="upload-box">
+
+                            <div class="upload-icon">🖼️</div>
+
+                            <p>Choose a clear photograph of the item you found</p>
+
+                            <input
+                                type="file"
+                                id="image"
+                                accept="image/*"
+                            >
+
+                            <img id="imagePreview" alt="Selected item preview">
+
+                            <p class="field-hint">
+                                Supported image formats. Maximum file size: 3 MB.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <!-- CONTACT -->
+
+                    <div class="form-group full-width">
+                        <label for="contact">
+                            📞 Your Contact Information <span class="required">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="contact"
+                            placeholder="Your email address or phone number"
+                            required
+                        >
+
+                        <span class="field-hint">
+                            Provide contact information so the rightful owner can reach you.
+                        </span>
+                    </div>
+
+                </div>
+
+                <!-- FORM BUTTONS -->
+
+                <div class="form-buttons">
+
+                    <a href="items.html" class="cancel-btn">
+                        ← Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="submit-btn"
+                        id="submitButton"
+                    >
+                        💚 Submit Found Report
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </section>
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <h3>CampusFind ✦</h3>
+
+        <p>Smart Campus Lost & Found Management System</p>
+
+        <p>© 2026 CampusFind. All Rights Reserved.</p>
+
+    </footer>
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // CHECK LOGIN STATUS
+
+            const token = localStorage.getItem("token");
+
+            let user = null;
+
+            try {
+                user = JSON.parse(localStorage.getItem("user") || "null");
+            } catch (error) {
+                user = null;
+            }
+
+            const loginLink = document.getElementById("loginLink");
+            const logoutButton = document.getElementById("logoutButton");
+            const userWelcome = document.getElementById("userWelcome");
+            const notificationBadge = document.getElementById("notificationBadge");
+
+            if (!token || !user) {
+
+                alert("Please login before reporting a found item.");
+
+                window.location.href = "login.html";
+
+                return;
+            }
+
+            // DISPLAY USER
+
+            loginLink.style.display = "none";
+            logoutButton.style.display = "inline-block";
+            userWelcome.style.display = "inline-block";
+
+            userWelcome.textContent = "Welcome, " + (user.name || "User");
+
+            // NOTIFICATION COUNT
+
+            async function loadNotificationCount() {
+
+                try {
+
+                    const response = await fetch(
+                        "https://campusfind-cl7z.onrender.com/api/notifications/unread-count",
+                        {
+                            headers: {
+                                "Authorization": "Bearer " + token
+                            }
+                        }
+                    );
+
+                    if (!response.ok) {
+                        return;
+                    }
+
+                    const data = await response.json();
+
+                    const count = Number(data.count || 0);
+
+                    if (count > 0) {
+
+                        notificationBadge.textContent =
+                            count > 99 ? "99+" : count;
+
+                        notificationBadge.classList.remove("hidden");
+
+                    } else {
+
+                        notificationBadge.classList.add("hidden");
+
+                    }
+
+                } catch (error) {
+
+                    console.error("Notification count error:", error);
+
+                }
+
+            }
+
+            loadNotificationCount();
+
+            // LOGOUT
+
+            logoutButton.addEventListener("click", function () {
+
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+
+                alert("You have logged out successfully!");
+
+                window.location.href = "index.html";
+
+            });
+
+            // FORM ELEMENTS
+
+            const foundForm = document.getElementById("foundForm");
+            const submitButton = document.getElementById("submitButton");
+            const imageInput = document.getElementById("image");
+            const imagePreview = document.getElementById("imagePreview");
+
+            // IMAGE PREVIEW
+
+            imageInput.addEventListener("change", function () {
+
+                const file = imageInput.files[0];
+
+                if (!file) {
+
+                    imagePreview.style.display = "none";
+                    imagePreview.removeAttribute("src");
+
+                    return;
+                }
+
+                if (!file.type.startsWith("image/")) {
+
+                    alert("Please select a valid image.");
+
+                    imageInput.value = "";
+                    imagePreview.style.display = "none";
+
+                    return;
+                }
+
+                if (file.size > 3 * 1024 * 1024) {
+
+                    alert("Please upload an image smaller than 3 MB.");
+
+                    imageInput.value = "";
+                    imagePreview.style.display = "none";
+
+                    return;
+                }
+
+                imagePreview.src = URL.createObjectURL(file);
+                imagePreview.style.display = "block";
+
+            });
+
+            // CONVERT IMAGE TO BASE64
+
+            function convertImageToBase64(file) {
+
+                return new Promise((resolve, reject) => {
+
+                    const reader = new FileReader();
+
+                    reader.onload = function () {
+                        resolve(reader.result);
+                    };
+
+                    reader.onerror = function () {
+                        reject(new Error("Could not read the uploaded image."));
+                    };
+
+                    reader.readAsDataURL(file);
+
+                });
+
+            }
+
+            // SUBMIT FOUND ITEM REPORT
+
+            foundForm.addEventListener("submit", async function (event) {
+
+                event.preventDefault();
+
+                const currentToken = localStorage.getItem("token");
+
+                if (!currentToken) {
+
+                    alert("Please login first!");
+
+                    window.location.href = "login.html";
+
+                    return;
+                }
+
+                try {
+
+                    submitButton.disabled = true;
+                    submitButton.textContent = "⏳ Submitting Report...";
+
+                    // GET IMAGE
+
+                    const imageFile = imageInput.files[0];
+
+                    let imageData = "";
+
+                    if (imageFile) {
+
+                        if (!imageFile.type.startsWith("image/")) {
+                            throw new Error("Please select a valid image.");
+                        }
+
+                        if (imageFile.size > 3 * 1024 * 1024) {
+                            throw new Error("Please upload an image smaller than 3 MB.");
+                        }
+
+                        imageData = await convertImageToBase64(imageFile);
+
+                    }
+
+                    // COLLECT FORM DETAILS
+
+                    const itemData = {
+
+                        itemName: document.getElementById("itemName").value.trim(),
+
+                        category: document.getElementById("category").value,
+
+                        description: document.getElementById("description").value.trim(),
+
+                        date: document.getElementById("foundDate").value,
+
+                        location: document.getElementById("location").value,
+
+                        image: imageData,
+
+                        contact: document.getElementById("contact").value.trim(),
+
+                        type: "found"
+
+                    };
+
+                    // SEND TO BACKEND
+
+                    const response = await fetch(
+                        "https://campusfind-cl7z.onrender.com/api/items",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": "Bearer " + currentToken
+                            },
+
+                            body: JSON.stringify(itemData)
+                        }
+                    );
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data.message || "Failed to submit found item report."
+                        );
+
+                    }
+
+                    // SUCCESS
+
+                    alert("🎉 Found item report saved successfully!");
+
+                    foundForm.reset();
+
+                    imagePreview.style.display = "none";
+                    imagePreview.removeAttribute("src");
+
+                } catch (error) {
+
+                    console.error("Found item submission error:", error);
+
+                    alert(
+                        error.message ||
+                        "Could not connect to the server. Please try again."
+                    );
+
+                } finally {
+
+                    submitButton.disabled = false;
+
+                    submitButton.textContent = "💚 Submit Found Report";
+
+                }
+
+            });
+
+        });
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Items | CampusFind</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #263858;
+            background: #f5f7ff;
+        }
+
+        /* NAVIGATION */
+        .navbar {
+            min-height: 76px;
+            padding: 12px 3%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: nowrap;
+            gap: 12px;
+            background: white;
+            box-shadow: 0 5px 25px rgba(35,55,110,.08);
+            position: relative;
+            z-index: 5;
+        }
+
+        .logo {
+            color: #3269ed;
+            font-size: 23px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            white-space: nowrap;
+        }
+
+        .logo::after {
+            content: " ✦";
+            color: #9464ed;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: nowrap;
+            gap: 11px;
+        }
+
+        .nav-links a {
+            color: #43516e;
+            font-size: 11px;
+            font-weight: 750;
+            white-space: nowrap;
+            transition: .25s;
+        }
+
+        .nav-links a:hover { color: #7655e8; }
+
+        #userWelcome {
+            color: #4169d9;
+            font-weight: 700;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .login-btn {
+            padding: 10px 17px;
+            border: none;
+            border-radius: 11px;
+            color: white !important;
+            background: linear-gradient(120deg,#4169e1,#8055e8);
+            font-weight: 750;
+            cursor: pointer;
+            box-shadow: 0 7px 18px rgba(65,105,225,.2);
+            transition: .25s;
+            white-space: nowrap;
+        }
+
+        .login-btn:hover { transform: translateY(-3px); }
+
+        /* NOTIFICATION BADGE */
+        .notification-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .notification-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 5px;
+            border-radius: 20px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 900;
+        }
+
+        .notification-badge:empty,
+        .notification-badge[data-count="0"] {
+            display: none;
+        }
+
+        /* PAGE HEADER */
+        .page-header {
+            padding: 65px 20px 55px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 10% 90%,rgba(87,159,255,.24),transparent 35%),
+                radial-gradient(circle at 90% 10%,rgba(165,119,255,.3),transparent 35%),
+                linear-gradient(120deg,#e9f0ff,#f3edff);
+        }
+
+        .page-header::before {
+            content: "🔎";
+            position: absolute;
+            font-size: 110px;
+            opacity: .10;
+            right: 10%;
+            top: 5px;
+            transform: rotate(-15deg);
+        }
+
+        .page-tag {
+            display: inline-block;
+            padding: 8px 17px;
+            margin-bottom: 15px;
+            border-radius: 30px;
+            color: #4169d9;
+            background: rgba(255,255,255,.8);
+            border: 1px solid #dce5ff;
+            font-size: 11px;
+            font-weight: 850;
+            letter-spacing: 1px;
+        }
+
+        .page-header h1 {
+            position: relative;
+            color: #172f70;
+            font-size: clamp(30px,4vw,44px);
+            font-weight: 900;
+            margin: 0 0 12px;
+        }
+
+        .page-header p {
+            position: relative;
+            color: #6e7d99;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        /* SEARCH SECTION */
+        .search-section {
+            max-width: 1100px;
+            margin: -24px auto 40px;
+            padding: 22px;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+            background: white;
+            border: 1px solid #e7ebf7;
+            border-radius: 19px;
+            box-shadow: 0 12px 35px rgba(35,55,110,.10);
+        }
+
+        .search-label {
+            width: 100%;
+            color: #243d78;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .search-section input,
+        .search-section select {
+            min-height: 49px;
+            padding: 12px 15px;
+            border: 1px solid #dfe5f2;
+            border-radius: 11px;
+            background: #f8faff;
+            color: #344465;
+            font-size: 14px;
+        }
+
+        .search-section input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-section select { min-width: 155px; }
+
+        .search-section input:focus,
+        .search-section select:focus {
+            outline: none;
+            border-color: #5579ed;
+            box-shadow: 0 0 0 4px rgba(65,105,225,.10);
+        }
+
+        #searchButton {
+            min-height: 49px;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 11px;
+            color: white;
+            background: linear-gradient(120deg,#4169e1,#8055e8);
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: .25s;
+        }
+
+        #searchButton:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 20px rgba(65,105,225,.25);
+        }
+
+        /* ITEMS SECTION */
+        .items-section {
+            max-width: 1250px;
+            min-height: 300px;
+            padding: 10px 25px 65px;
+            margin: auto;
+        }
+
+        .items-heading { margin-bottom: 25px; }
+
+        .items-heading h2 {
+            color: #172f70;
+            font-size: 25px;
+            margin: 0 0 5px;
+        }
+
+        .items-heading p {
+            color: #8290a9;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(3,minmax(0,1fr));
+            gap: 27px;
+        }
+
+        /* ITEM CARD */
+        .item-card {
+            min-width: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border: 1px solid #e8edf8;
+            border-radius: 21px;
+            box-shadow: 0 9px 28px rgba(35,55,110,.07);
+            transition: .3s ease;
+        }
+
+        .item-card:hover {
+            transform: translateY(-8px);
+            border-color: #c9d6ff;
+            box-shadow: 0 18px 38px rgba(35,55,110,.14);
+        }
+
+        /* ITEM IMAGE */
+        .item-image {
+            width: 100%;
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: white;
+            font-size: 76px;
+            background:
+                radial-gradient(circle at 80% 20%,rgba(255,255,255,.25),transparent 35%),
+                linear-gradient(135deg,#477cf0,#8a63e9);
+        }
+
+        .item-card:nth-child(3n+2) .item-image {
+            background: linear-gradient(135deg,#10bda5,#087e91);
+        }
+
+        .item-card:nth-child(3n+3) .item-image {
+            background: linear-gradient(135deg,#ff9c55,#e65b7a);
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            transition: transform .45s ease;
+        }
+
+        .item-card:hover .item-image img { transform: scale(1.07); }
+
+        /* ITEM CONTENT */
+        .item-content {
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            align-items: flex-start;
+        }
+
+        .item-content h3 {
+            width: 100%;
+            margin: 13px 0 8px;
+            color: #193675;
+            font-size: 21px;
+            font-weight: 850;
+            overflow-wrap: anywhere;
+        }
+
+        .item-content p {
+            width: 100%;
+            margin: 5px 0;
+            color: #77849d;
+            font-size: 13px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        /* BADGES */
+        .status {
+            display: inline-flex;
+            padding: 7px 13px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 850;
+            letter-spacing: .6px;
+        }
+
+        .status.lost {
+            color: #d04455;
+            background: #fff0f1;
+        }
+
+        .status.found {
+            color: #087f69;
+            background: #e1faf0;
+        }
+
+        /* DETAILS BUTTON */
+        .details-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: auto;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #4169d9;
+            background: #edf2ff;
+            font-size: 13px;
+            font-weight: 800;
+            text-decoration: none;
+            transition: .25s;
+        }
+
+        .details-btn::after {
+            content: " →";
+            margin-left: 5px;
+        }
+
+        .details-btn:hover {
+            color: white;
+            background: #4169d9;
+        }
+
+        /* CLAIM BUTTON */
+        .claim-btn {
+            width: 100%;
+            margin-top: 11px;
+            padding: 13px 16px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            background: linear-gradient(120deg,#10bda5,#087e91);
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: .25s;
+        }
+
+        .claim-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 20px rgba(8,126,145,.23);
+        }
+
+        /* EDIT AND DELETE */
+        .item-actions {
+            width: 100%;
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .edit-btn,
+        .delete-btn {
+            flex: 1;
+            padding: 11px 15px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: .25s;
+        }
+
+        .edit-btn { background: linear-gradient(120deg,#4169e1,#647fe9); }
+
+        .delete-btn { background: linear-gradient(120deg,#ed5266,#d92d48); }
+
+        .edit-btn:hover,
+        .delete-btn:hover {
+            transform: translateY(-3px);
+            filter: brightness(.95);
+        }
+
+        /* EMPTY STATE */
+        #noItemsMessage {
+            padding: 45px 20px;
+            margin: 15px 0;
+            color: #7886a0;
+            text-align: center;
+            background: white;
+            border: 1px dashed #cbd6eb;
+            border-radius: 18px;
+            font-size: 16px;
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 42px 20px;
+            text-align: center;
+            color: white;
+            background:
+                radial-gradient(circle at 10% 10%,rgba(135,115,255,.25),transparent 35%),
+                linear-gradient(120deg,#172f70,#354eaa,#6546b5);
+        }
+
+        footer h3 { font-size: 27px; margin-bottom: 8px; }
+
+        footer p {
+            color: rgba(255,255,255,.82);
+            font-size: 13px;
+            margin: 6px 0;
+        }
+
+        /* RESPONSIVE */
+        @media(max-width:1100px) {
+            .navbar {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-links {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media(max-width:1000px) {
+            .items-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+
+            .search-section {
+                margin-left: 20px;
+                margin-right: 20px;
+            }
+        }
+
+        @media(max-width:700px) {
+            .navbar { flex-direction: column; }
+
+            .nav-links { gap: 13px; }
+
+            .items-grid { grid-template-columns: 1fr; }
+
+            .page-header { padding: 50px 18px; }
+
+            .search-section {
+                flex-direction: column;
+                align-items: stretch;
+                margin-top: -15px;
+            }
+
+            .search-section input,
+            .search-section select,
+            #searchButton { width: 100%; }
+
+            .items-section { padding: 10px 16px 45px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <a href="index.html" class="logo">CampusFind</a>
+
+        <div class="nav-links">
+            <a href="index.html">🏠 Home</a>
+            <a href="items.html">🔍 Browse Items</a>
+            <a href="stats.html">📊 Statistics</a>
+            <a href="report-lost.html">📍 Report Lost</a>
+            <a href="report-found.html">🎒 Report Found</a>
+            <a href="my-reports.html">📋 My Reports</a>
+            <a href="my-claims.html">📩 My Claims</a>
+            <a href="received-claims.html">📬 Received Claims</a>
+
+            <a href="notifications.html" class="notification-nav">
+                🔔 Notifications
+                <span id="notificationBadge"
+                    class="notification-badge"
+                    data-count="0"></span>
+            </a>
+
+            <a href="login.html" class="login-btn" id="loginLink">
+                Login
+            </a>
+
+            <span id="userWelcome" style="display:none;"></span>
+
+            <button id="logoutButton"
+                class="login-btn"
+                style="display:none;"
+                type="button">
+                Logout
+            </button>
+        </div>
+
+    </nav>
+
+    <section class="page-header">
+
+        <div class="page-tag">✦ CAMPUS LOST & FOUND COMMUNITY</div>
+
+        <h1>Find What You're Looking For 🔎</h1>
+
+        <p>
+            Discover lost belongings, return found items and reconnect
+            people with the things that matter.
+        </p>
+
+    </section>
+
+    <section class="search-section">
+
+        <div class="search-label">
+            🔍 Search and filter campus belongings
+        </div>
+
+        <input type="text"
+            placeholder="Search by item name, description or location..."
+            id="searchInput">
+
+        <select id="categoryFilter">
+            <option value="all">All Categories</option>
+            <option value="electronics">📱 Electronics</option>
+            <option value="documents">🪪 Documents</option>
+            <option value="books">📚 Books</option>
+            <option value="bags">🎒 Bags</option>
+            <option value="accessories">⌚ Accessories</option>
+            <option value="others">📦 Others</option>
+        </select>
+
+        <select id="typeFilter">
+            <option value="all">Lost & Found</option>
+            <option value="lost">🔴 Lost Items</option>
+            <option value="found">🟢 Found Items</option>
+        </select>
+
+        <button id="searchButton" type="button">
+            Search Items →
+        </button>
+
+    </section>
+
+    <section class="items-section">
+
+        <div class="items-heading">
+            <h2>✨ Campus Item Listings</h2>
+            <p>Browse the latest reported belongings from your campus.</p>
+        </div>
+
+        <div class="items-grid" id="itemsGrid">
+            <p>Loading items...</p>
+        </div>
+
+        <p id="noItemsMessage" style="display:none;">
+            📭 No items found. Try changing your search filters.
+        </p>
+
+    </section>
+
+    <footer>
+        <h3>CampusFind ✦</h3>
+        <p>Smart Campus Lost & Found Management System</p>
+        <p>© 2026 CampusFind. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const API_URL = "https://campusfind-cl7z.onrender.com/api/items";
+
+            const token = localStorage.getItem("token");
+
+            let user = null;
+
+            try {
+                user = JSON.parse(localStorage.getItem("user") || "null");
+            } catch (error) {
+                user = null;
+            }
+
+            const loginLink = document.getElementById("loginLink");
+            const logoutButton = document.getElementById("logoutButton");
+            const userWelcome = document.getElementById("userWelcome");
+
+            if (token && user) {
+                loginLink.style.display = "none";
+                logoutButton.style.display = "inline-block";
+                userWelcome.style.display = "inline-block";
+                userWelcome.textContent = "Welcome, " + (user.name || "User");
+            }
+
+            // Load unread notification count for navbar badge
+            async function loadUnreadNotificationCount() {
+                const badge = document.getElementById("notificationBadge");
+
+                if (!badge || !token) return;
+
+                try {
+                    const response = await fetch(
+                        "https://campusfind-cl7z.onrender.com/api/notifications/unread-count",
+                        {
+                            headers: {
+                                Authorization: "Bearer " + token
+                            }
+                        }
+                    );
+
+                    if (!response.ok) return;
+
+                    const data = await response.json();
+                    const count = Number(data.count || 0);
+
+                    badge.textContent =
+                        count > 99 ? "99+" : (count ? String(count) : "");
+
+                    badge.dataset.count = String(count);
+
+                } catch (error) {
+                    console.warn(
+                        "Unable to load notification count:",
+                        error
+                    );
+                }
+            }
+
+            loadUnreadNotificationCount();
+
+            // LOGOUT
+            logoutButton.addEventListener("click", function () {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+
+                alert("You have logged out successfully!");
+
+                window.location.href = "index.html";
+            });
+
+            const itemsGrid = document.getElementById("itemsGrid");
+            const searchInput = document.getElementById("searchInput");
+            const categoryFilter = document.getElementById("categoryFilter");
+            const typeFilter = document.getElementById("typeFilter");
+            const searchButton = document.getElementById("searchButton");
+            const noItemsMessage = document.getElementById("noItemsMessage");
+
+            let allItems = [];
+
+            // FORMAT CATEGORY
+            function formatCategory(category) {
+                const categories = {
+                    electronics: "Electronics",
+                    documents: "Documents",
+                    books: "Books",
+                    bags: "Bags",
+                    accessories: "Accessories",
+                    others: "Others"
+                };
+
+                return categories[category] || category || "Others";
+            }
+
+            // FORMAT LOCATION
+            function formatLocation(location) {
+                const locations = {
+                    library: "Library",
+                    "block-a": "Block A",
+                    "block-b": "Block B",
+                    "cse-lab": "CSE Lab",
+                    cafeteria: "Cafeteria",
+                    parking: "Parking Area",
+                    auditorium: "Auditorium",
+                    other: "Other"
+                };
+
+                return locations[location] || location || "Not specified";
+            }
+
+            // FORMAT DATE
+            function formatDate(dateValue) {
+                if (!dateValue) return "Date not available";
+
+                const date = new Date(dateValue);
+
+                if (isNaN(date.getTime())) {
+                    return "Date not available";
+                }
+
+                return date.toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                });
+            }
+
+            // CATEGORY EMOJI
+            function getItemEmoji(category) {
+                const emojis = {
+                    electronics: "📱",
+                    documents: "🪪",
+                    books: "📚",
+                    bags: "🎒",
+                    accessories: "⌚",
+                    others: "📦"
+                };
+
+                return emojis[category] || "📦";
+            }
+
+            // CHECK ITEM OWNER
+            function isOwner(item) {
+                if (!token || !user) return false;
+
+                const userId = user.id || user._id;
+
+                if (!userId) return false;
+
+                const reportedBy = item.reportedBy;
+
+                const ownerId =
+                    reportedBy && typeof reportedBy === "object"
+                        ? reportedBy._id
+                        : reportedBy;
+
+                return String(ownerId) === String(userId);
+            }
+
+            // DELETE ITEM
+            async function deleteItem(itemId) {
+                const confirmed = confirm(
+                    "Are you sure you want to delete this item?"
+                );
+
+                if (!confirmed) return;
+
+                try {
+                    const response = await fetch(
+                        `${API_URL}/${encodeURIComponent(itemId)}`,
+                        {
+                            method: "DELETE",
+                            headers: {
+                                "Authorization": "Bearer " + token
+                            }
+                        }
+                    );
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(
+                            data.message || "Unable to delete item."
+                        );
+                    }
+
+                    alert("Item deleted successfully!");
+
+                    await fetchItems();
+                    filterItems();
+
+                } catch (error) {
+                    console.error("Delete error:", error);
+                    alert(error.message);
+                }
+            }
+
+            // DISPLAY ITEMS
+            function displayItems(items) {
+                itemsGrid.innerHTML = "";
+                noItemsMessage.style.display = "none";
+
+                if (items.length === 0) {
+                    noItemsMessage.style.display = "block";
+                    return;
+                }
+
+                items.forEach(function (item) {
+
+                    const card = document.createElement("article");
+                    card.className = "item-card";
+
+                    // IMAGE
+                    const imageContainer = document.createElement("div");
+                    imageContainer.className = "item-image";
+
+                    if (item.image) {
+                        const image = document.createElement("img");
+
+                        image.src = item.image;
+                        image.alt = item.itemName || "Reported item";
+                        image.loading = "lazy";
+
+                        image.onerror = function () {
+                            image.remove();
+                            imageContainer.textContent =
+                                getItemEmoji(item.category);
+                        };
+
+                        imageContainer.appendChild(image);
+
+                    } else {
+                        imageContainer.textContent =
+                            getItemEmoji(item.category);
+                    }
+
+                    // CONTENT
+                    const content = document.createElement("div");
+                    content.className = "item-content";
+
+                    const status = document.createElement("span");
+                    status.className = "status " + item.type;
+
+                    status.textContent =
+                        item.type === "found" ? "✓ FOUND" : "● LOST";
+
+                    const heading = document.createElement("h3");
+                    heading.textContent = item.itemName || "Unnamed item";
+
+                    const description = document.createElement("p");
+                    description.textContent =
+                        item.description || "No description provided.";
+
+                    const category = document.createElement("p");
+                    category.textContent =
+                        "🏷️ " + formatCategory(item.category);
+
+                    const location = document.createElement("p");
+                    location.textContent =
+                        "📍 " + formatLocation(item.location);
+
+                    const date = document.createElement("p");
+                    date.textContent = "📅 " + formatDate(item.date);
+
+                    // DETAILS LINK
+                    const detailsLink = document.createElement("a");
+
+                    detailsLink.href =
+                        "item-details.html?id=" +
+                        encodeURIComponent(item._id);
+
+                    detailsLink.className = "details-btn";
+                    detailsLink.textContent = "View Details";
+
+                    content.appendChild(status);
+                    content.appendChild(heading);
+                    content.appendChild(description);
+                    content.appendChild(category);
+                    content.appendChild(location);
+                    content.appendChild(date);
+                    content.appendChild(detailsLink);
+
+                    // CLAIM BUTTON
+                    if (
+                        item.type === "found" &&
+                        (item.status || "active") === "active" &&
+                        !isOwner(item)
+                    ) {
+                        const claimButton =
+                            document.createElement("button");
+
+                        claimButton.type = "button";
+                        claimButton.className = "claim-btn";
+                        claimButton.textContent = "🎒 Claim This Item";
+
+                        claimButton.addEventListener("click", function () {
+
+                            if (!token) {
+                                alert("Please login before claiming an item.");
+                                window.location.href = "login.html";
+                                return;
+                            }
+
+                            window.location.href =
+                                "claim-item.html?id=" +
+                                encodeURIComponent(item._id);
+                        });
+
+                        content.appendChild(claimButton);
+                    }
+
+                    // OWNER ACTIONS
+                    if (isOwner(item)) {
+
+                        const actions = document.createElement("div");
+                        actions.className = "item-actions";
+
+                        // EDIT
+                        const editButton = document.createElement("button");
+
+                        editButton.type = "button";
+                        editButton.className = "edit-btn";
+                        editButton.textContent = "✏️ Edit";
+
+                        editButton.addEventListener("click", function () {
+                            window.location.href =
+                                "edit-item.html?id=" +
+                                encodeURIComponent(item._id);
+                        });
+
+                        // DELETE
+                        const deleteButton =
+                            document.createElement("button");
+
+                        deleteButton.type = "button";
+                        deleteButton.className = "delete-btn";
+                        deleteButton.textContent = "🗑️ Delete";
+
+                        deleteButton.addEventListener("click", function () {
+                            deleteItem(item._id);
+                        });
+
+                        actions.appendChild(editButton);
+                        actions.appendChild(deleteButton);
+
+                        content.appendChild(actions);
+                    }
+
+                    card.appendChild(imageContainer);
+                    card.appendChild(content);
+
+                    itemsGrid.appendChild(card);
+                });
+            }
+
+            // FILTER ITEMS
+            function filterItems() {
+                const searchText =
+                    searchInput.value.trim().toLowerCase();
+
+                const selectedCategory = categoryFilter.value;
+                const selectedType = typeFilter.value;
+
+                const filteredItems = allItems.filter(function (item) {
+
+                    const matchesSearch =
+                        (item.itemName || "")
+                            .toLowerCase()
+                            .includes(searchText) ||
+
+                        (item.description || "")
+                            .toLowerCase()
+                            .includes(searchText) ||
+
+                        (item.location || "")
+                            .toLowerCase()
+                            .includes(searchText);
+
+                    const matchesCategory =
+                        selectedCategory === "all" ||
+                        item.category === selectedCategory;
+
+                    const matchesType =
+                        selectedType === "all" ||
+                        item.type === selectedType;
+
+                    return matchesSearch &&
+                        matchesCategory &&
+                        matchesType;
+                });
+
+                displayItems(filteredItems);
+            }
+
+            // SEARCH EVENTS
+            searchButton.addEventListener("click", filterItems);
+            searchInput.addEventListener("input", filterItems);
+            categoryFilter.addEventListener("change", filterItems);
+            typeFilter.addEventListener("change", filterItems);
+
+            // FETCH ITEMS
+            async function fetchItems() {
+                try {
+                    const response = await fetch(API_URL);
+
+                    if (!response.ok) {
+                        throw new Error(
+                            "Unable to retrieve items from server."
+                        );
+                    }
+
+                    const data = await response.json();
+
+                    allItems = Array.isArray(data) ? data : [];
+
+                } catch (error) {
+                    console.error("Error loading items:", error);
+
+                    itemsGrid.innerHTML = "";
+
+                    noItemsMessage.textContent =
+                        "⚠️ Unable to load items. Please check your backend server.";
+
+                    noItemsMessage.style.display = "block";
+                }
+            }
+
+            // LOAD PAGE
+            async function loadPage() {
+                await fetchItems();
+                filterItems();
+            }
+
+            loadPage();
+
+        });
+    </script>
+
+</body>
+</html>

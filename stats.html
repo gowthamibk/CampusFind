@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFind | Campus Statistics</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f8fafc;
+        }
+
+        .stats-navbar {
+            background: white;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+
+        .stats-navbar .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #6366f1;
+            text-decoration: none;
+        }
+
+        .stats-navbar .nav-links {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
+        .stats-navbar .nav-links a {
+            text-decoration: none;
+            color: #334155;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .stats-navbar .nav-links a:hover {
+            color: #6366f1;
+        }
+
+        .notification-link {
+            position: relative;
+        }
+
+        .notification-badge {
+            background: #ef4444;
+            color: white;
+            border-radius: 50px;
+            padding: 2px 6px;
+            font-size: 11px;
+            margin-left: 4px;
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .stats-header {
+            margin-bottom: 30px;
+        }
+
+        .stats-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .stats-header p {
+            color: #64748b;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 22px;
+            margin-bottom: 35px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+            border: 1px solid #e5e7eb;
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-icon {
+            font-size: 30px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .stat-number {
+            font-size: 34px;
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        .stat-description {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 8px;
+        }
+
+        .stats-section {
+            background: white;
+            padding: 25px;
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.04);
+            margin-bottom: 30px;
+        }
+
+        .stats-section h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .recovery-wrapper {
+            margin-top: 20px;
+        }
+
+        .recovery-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 16px;
+            background: #e2e8f0;
+            border-radius: 50px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            border-radius: 50px;
+            transition: width 1s ease;
+        }
+
+        .recent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .recent-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+        }
+
+        .recent-image {
+            width: 75px;
+            height: 75px;
+            border-radius: 12px;
+            object-fit: cover;
+            background: #f1f5f9;
+            flex-shrink: 0;
+        }
+
+        .recent-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .recent-details h3 {
+            margin: 0 0 8px;
+            font-size: 16px;
+            overflow-wrap: anywhere;
+        }
+
+        .recent-details p {
+            margin: 5px 0;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .recent-badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .badge-lost {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .badge-found {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .badge-recovered {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-claimed {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .loading-message,
+        .empty-message,
+        .error-message {
+            text-align: center;
+            padding: 35px 15px;
+            color: #64748b;
+        }
+
+        .error-message {
+            color: #dc2626;
+        }
+
+        .refresh-btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 10px;
+            background: #6366f1;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .refresh-btn:hover {
+            background: #4f46e5;
+        }
+
+        .stats-footer-note {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+
+            .stats-navbar {
+                padding: 15px;
+            }
+
+            .stats-navbar .nav-links {
+                gap: 12px;
+            }
+
+            .stats-navbar .nav-links a {
+                font-size: 12px;
+            }
+
+            .stats-container {
+                padding: 15px;
+                margin: 20px auto;
+            }
+
+            .stats-header h1 {
+                font-size: 26px;
+            }
+
+            .recent-item {
+                align-items: flex-start;
+            }
+
+            .recent-image {
+                width: 60px;
+                height: 60px;
+            }
+
+            .stat-number {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="stats-navbar">
+
+        <a href="index.html" class="logo">CampusFind</a>
+
+        <div class="nav-links">
+
+            <a href="index.html">Home</a>
+
+            <a href="items.html">Browse Items</a>
+
+            <a href="stats.html">📊 Statistics</a>
+
+            <a href="report-lost.html">Report Lost</a>
+
+            <a href="report-found.html">Report Found</a>
+
+            <a href="my-reports.html">My Reports</a>
+
+            <a href="my-claims.html">My Claims</a>
+
+            <a href="received-claims.html">Received Claims</a>
+
+            <a href="notifications.html" class="notification-link">
+                🔔 Notifications
+                <span id="notificationBadge"
+                    class="notification-badge"
+                    style="display:none;">0</span>
+            </a>
+
+            <a href="login.html" id="loginLink">Login</a>
+
+            <a href="#" id="logoutLink" style="display:none;">Logout</a>
+
+            <a href="admin.html" id="adminLink" style="display:none;">Admin</a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- Main Container -->
+    <div class="stats-container">
+
+        <div class="stats-header">
+
+            <h1>📊 Campus Statistics</h1>
+
+            <p>
+                See how CampusFind is helping our campus
+                reunite people with their belongings.
+            </p>
+
+        </div>
+
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">🔍</div>
+
+                <h3>Lost Items Reported</h3>
+
+                <div class="stat-number" id="totalLost">--</div>
+
+                <div class="stat-description">
+                    Items reported as lost
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">📦</div>
+
+                <h3>Found Items Reported</h3>
+
+                <div class="stat-number" id="totalFound">--</div>
+
+                <div class="stat-description">
+                    Items found on campus
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">🤝</div>
+
+                <h3>Total Claims</h3>
+
+                <div class="stat-number" id="totalClaims">--</div>
+
+                <div class="stat-description">
+                    Claims submitted by users
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">⏳</div>
+
+                <h3>Pending Claims</h3>
+
+                <div class="stat-number" id="pendingClaims">--</div>
+
+                <div class="stat-description">
+                    Claims awaiting approval
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">✅</div>
+
+                <h3>Recovered Items</h3>
+
+                <div class="stat-number" id="totalRecovered">--</div>
+
+                <div class="stat-description">
+                    Items marked recovered
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Recovery Rate -->
+        <div class="stats-section">
+
+            <h2>🎯 Recovery Rate</h2>
+
+            <div class="recovery-wrapper">
+
+                <div class="recovery-info">
+
+                    <span>Campus recovery progress</span>
+
+                    <span id="recoveryRate">0%</span>
+
+                </div>
+
+                <div class="progress-track">
+
+                    <div class="progress-fill"
+                        id="recoveryProgress"></div>
+
+                </div>
+
+                <p style="color:#64748b; margin-top:15px;">
+                    This percentage represents recovered items
+                    compared with the total reported items.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Recent Reports -->
+        <div class="stats-section">
+
+            <h2>🕒 Recent Reports</h2>
+
+            <div id="recentItems" class="recent-list">
+
+                <div class="loading-message">
+                    Loading recent reports...
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Refresh -->
+        <div style="text-align:center;">
+
+            <button class="refresh-btn"
+                onclick="loadStats()">
+                🔄 Refresh Statistics
+            </button>
+
+        </div>
+
+
+        <div class="stats-footer-note">
+            CampusFind · Campus Lost & Found
+        </div>
+
+    </div>
+
+
+    <!-- JavaScript -->
+    <script>
+
+        const API = "https://campusfind-cl7z.onrender.com/api";
+
+        const token = localStorage.getItem("token");
+
+        let currentUser = null;
+
+        try {
+            currentUser = JSON.parse(
+                localStorage.getItem("user") || "null"
+            );
+        } catch (error) {
+            currentUser = null;
+        }
+
+
+        // Navigation elements
+        const loginLink =
+            document.getElementById("loginLink");
+
+        const logoutLink =
+            document.getElementById("logoutLink");
+
+        const adminLink =
+            document.getElementById("adminLink");
+
+
+        // Navigation login status
+        if (token && currentUser) {
+
+            loginLink.style.display = "none";
+
+            logoutLink.style.display = "inline";
+
+            if (currentUser.role === "admin") {
+
+                adminLink.style.display = "inline";
+
+            }
+
+        } else {
+
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+
+        }
+
+
+        // Logout
+        logoutLink.addEventListener("click", function(e) {
+
+            e.preventDefault();
+
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+
+            window.location.href = "index.html";
+
+        });
+
+
+        // Notification count
+        async function loadNotificationCount() {
+
+            if (!token || !currentUser) return;
+
+            try {
+
+                const response = await fetch(
+                    `${API}/notifications/unread-count`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
+                if (response.status === 401) {
+
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("user");
+
+                    window.location.href = "login.html";
+                    return;
+
+                }
+
+                if (!response.ok) return;
+
+                const data = await response.json();
+
+                const badge =
+                    document.getElementById("notificationBadge");
+
+                const count = Number(
+                    data.count || data.unreadCount || 0
+                );
+
+                if (count > 0) {
+
+                    badge.textContent =
+                        count > 99 ? "99+" : count;
+
+                    badge.style.display = "inline-block";
+
+                } else {
+
+                    badge.style.display = "none";
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Notification count error:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        // Item type
+        function getItemType(item) {
+
+            return item.type || item.category || "item";
+
+        }
+
+
+        // Item status
+        function getItemStatus(item) {
+
+            return item.status || "active";
+
+        }
+
+
+        // Item name
+        function getItemName(item) {
+
+            return item.itemName ||
+                   item.title ||
+                   item.name ||
+                   "Untitled Item";
+
+        }
+
+
+        // Item image
+        function getItemImage(item) {
+
+            return item.image ||
+                   item.imageUrl ||
+                   item.photo ||
+                   "";
+
+        }
+
+
+        // Format date
+        function formatDate(dateString) {
+
+            if (!dateString) {
+                return "Date unavailable";
+            }
+
+            const date = new Date(dateString);
+
+            if (isNaN(date.getTime())) {
+                return "Date unavailable";
+            }
+
+            return date.toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+            });
+
+        }
+
+
+        // Update statistic
+        function updateStat(id, value) {
+
+            const element =
+                document.getElementById(id);
+
+            if (element) {
+
+                element.textContent =
+                    value ?? 0;
+
+            }
+
+        }
+
+
+        // Load statistics
+        async function loadStats() {
+
+            const recentContainer =
+                document.getElementById("recentItems");
+
+            recentContainer.innerHTML =
+                '<div class="loading-message">Loading recent reports...</div>';
+
+            try {
+
+                const response = await fetch(
+                    `${API}/stats`
+                );
+
+                let data = {};
+
+                try {
+
+                    data = await response.json();
+
+                } catch (error) {
+
+                    data = {};
+
+                }
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to fetch statistics."
+                    );
+
+                }
+
+
+                // Update statistics
+                updateStat("totalLost", data.totalLost);
+
+                updateStat("totalFound", data.totalFound);
+
+                updateStat("totalClaims", data.totalClaims);
+
+                updateStat("pendingClaims", data.pendingClaims);
+
+                updateStat("totalRecovered", data.totalRecovered);
+
+
+                // Recovery rate
+                const rate = Math.min(
+                    100,
+                    Math.max(
+                        0,
+                        Number(data.recoveryRate) || 0
+                    )
+                );
+
+                document.getElementById("recoveryRate")
+                    .textContent = rate + "%";
+
+                document.getElementById("recoveryProgress")
+                    .style.width = rate + "%";
+
+
+                // Recent reports
+                renderRecentItems(
+                    Array.isArray(data.recentItems)
+                        ? data.recentItems
+                        : []
+                );
+
+
+            } catch (error) {
+
+                console.error("Stats error:", error);
+
+                recentContainer.innerHTML = `
+                    <div class="error-message">
+                        Unable to load statistics.<br>
+                        Please ensure the CampusFind backend is running.
+                    </div>
+                `;
+
+            }
+
+        }
+
+
+        // Render recent reports
+        function renderRecentItems(items) {
+
+            const container =
+                document.getElementById("recentItems");
+
+            if (!items || items.length === 0) {
+
+                container.innerHTML = `
+                    <div class="empty-message">
+                        No reports available yet.
+                    </div>
+                `;
+
+                return;
+
+            }
+
+
+            container.innerHTML = items.map(item => {
+
+                const type =
+                    String(getItemType(item)).toLowerCase();
+
+                const status =
+                    String(getItemStatus(item)).toLowerCase();
+
+                const name =
+                    getItemName(item);
+
+                const image =
+                    getItemImage(item);
+
+
+                // Badge class
+                let badgeClass = "badge-found";
+
+                if (status === "recovered") {
+
+                    badgeClass = "badge-recovered";
+
+                } else if (status === "claimed") {
+
+                    badgeClass = "badge-claimed";
+
+                } else if (type === "lost") {
+
+                    badgeClass = "badge-lost";
+
+                }
+
+
+                // Image fallback
+                const imageMarkup = image
+
+                    ? `
+                        <img
+                            class="recent-image"
+                            src="${escapeHTML(image)}"
+                            alt="${escapeHTML(name)}"
+                            onerror="this.outerHTML='<div class=\\'recent-image\\' style=\\'display:flex;align-items:center;justify-content:center;font-size:25px;\\'>📦</div>'"
+                        >
+                    `
+
+                    : `
+                        <div
+                            class="recent-image"
+                            style="display:flex;align-items:center;justify-content:center;font-size:25px;">
+                            📦
+                        </div>
+                    `;
+
+
+                return `
+                    <div class="recent-item">
+
+                        ${imageMarkup}
+
+                        <div class="recent-details">
+
+                            <h3>${escapeHTML(name)}</h3>
+
+                            <p>
+                                ${escapeHTML(type)}
+                                ·
+                                ${formatDate(item.createdAt)}
+                            </p>
+
+                            <span class="recent-badge ${badgeClass}">
+                                ${escapeHTML(status)}
+                            </span>
+
+                        </div>
+
+                    </div>
+                `;
+
+            }).join("");
+
+        }
+
+
+        // HTML escaping
+        function escapeHTML(value) {
+
+            return String(value ?? "").replace(
+                /[&<>"']/g,
+                char => ({
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#039;"
+                })[char]
+            );
+
+        }
+
+
+        // Initialize
+        loadStats();
+        loadNotificationCount();
+
+    </script>
+
+</body>
+</html>

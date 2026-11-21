@@ -1,0 +1,361 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CampusFind | Campus Lost & Found</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .notification-link {
+            position: relative;
+        }
+
+        .notification-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            border-radius: 50px;
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 4px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+
+        <div class="logo">
+            CampusFind
+        </div>
+
+        <div class="nav-links">
+
+            <a href="index.html">Home</a>
+
+            <a href="items.html">Browse Items</a>
+
+            <a href="stats.html">Statistics</a>
+
+            <a href="report-lost.html">Report Lost</a>
+
+            <a href="report-found.html">Report Found</a>
+
+            <span id="userWelcome" style="display:none;"></span>
+
+            <a href="my-reports.html" id="myReportsLink" style="display:none;">
+                My Reports
+            </a>
+
+            <a href="my-claims.html" id="myClaimsLink" style="display:none;">
+                My Claims
+            </a>
+
+            <a href="received-claims.html" id="receivedClaimsLink" style="display:none;">
+                Received Claims
+            </a>
+
+            <a href="notifications.html" id="notificationLink"
+                class="notification-link" style="display:none;">
+
+                Notifications
+
+                <span id="notificationBadge" class="notification-badge"
+                    style="display:none;">0</span>
+
+            </a>
+
+            <a href="admin.html" id="adminLink" style="display:none;">
+                Admin Dashboard
+            </a>
+
+            <a href="login.html" class="login-btn" id="loginLink">
+                Login
+            </a>
+
+            <button id="logoutButton" class="login-btn"
+                style="display:none; border:none; cursor:pointer;">
+                Logout
+            </button>
+
+        </div>
+
+    </nav>
+
+
+    <!-- Hero Section -->
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <h1>
+                Find What You Lost.<br>
+                Return What You Found.
+            </h1>
+
+            <p>
+                CampusFind is a smart campus platform that helps
+                students and staff report, search and recover
+                lost belongings easily.
+            </p>
+
+            <div class="hero-buttons">
+
+                <a href="report-lost.html" class="btn primary-btn">
+                    Report Lost Item
+                </a>
+
+                <a href="report-found.html" class="btn secondary-btn">
+                    Report Found Item
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+
+        <h2>How CampusFind Works</h2>
+
+        <p class="section-description">
+            Recover your belongings in three simple steps.
+        </p>
+
+        <div class="steps">
+
+            <div class="step-card">
+
+                <div class="step-number">1</div>
+
+                <h3>Report</h3>
+
+                <p>
+                    Report an item you have lost or found
+                    on campus.
+                </p>
+
+            </div>
+
+
+            <div class="step-card">
+
+                <div class="step-number">2</div>
+
+                <h3>Search</h3>
+
+                <p>
+                    Browse and search through reported
+                    lost and found items.
+                </p>
+
+            </div>
+
+
+            <div class="step-card">
+
+                <div class="step-number">3</div>
+
+                <h3>Recover</h3>
+
+                <p>
+                    Submit a claim and get your belongings
+                    back safely.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+
+        <h3>CampusFind</h3>
+
+        <p>Smart Campus Lost & Found Management System</p>
+
+        <p>© 2026 CampusFind. All Rights Reserved.</p>
+
+    </footer>
+
+
+    <!-- Login, Logout and Navigation -->
+    <script>
+
+        // Safely read stored authentication information
+        let token = localStorage.getItem("token");
+        let user = null;
+
+        try {
+
+            user = JSON.parse(localStorage.getItem("user") || "null");
+
+        } catch (error) {
+
+            console.error("Invalid stored user data:", error);
+
+        }
+
+
+        // Clear inconsistent authentication storage
+        if (!token || !user || !user.name || !user.role) {
+
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+
+            token = null;
+            user = null;
+
+        }
+
+
+        // Navigation elements
+        const loginLink = document.getElementById("loginLink");
+
+        const logoutButton = document.getElementById("logoutButton");
+
+        const userWelcome = document.getElementById("userWelcome");
+
+        const myReportsLink = document.getElementById("myReportsLink");
+
+        const myClaimsLink = document.getElementById("myClaimsLink");
+
+        const receivedClaimsLink =
+            document.getElementById("receivedClaimsLink");
+
+        const notificationLink =
+            document.getElementById("notificationLink");
+
+        const notificationBadge =
+            document.getElementById("notificationBadge");
+
+        const adminLink = document.getElementById("adminLink");
+
+
+        // Logged-in navigation
+        if (token && user) {
+
+            loginLink.style.display = "none";
+
+            logoutButton.style.display = "inline-block";
+
+            userWelcome.style.display = "inline-block";
+
+            userWelcome.textContent = "Welcome, " + user.name;
+
+
+            myReportsLink.style.display = "inline-block";
+
+            myClaimsLink.style.display = "inline-block";
+
+            receivedClaimsLink.style.display = "inline-block";
+
+            notificationLink.style.display = "inline-block";
+
+
+            // Admin navigation
+            if (user.role === "admin") {
+
+                adminLink.style.display = "inline-block";
+
+            }
+
+
+            loadNotificationCount();
+
+        }
+
+
+        // Load unread notifications
+        async function loadNotificationCount() {
+
+            try {
+
+                const response = await fetch(
+                    "https://campusfind-cl7z.onrender.com/api/notifications/unread-count",
+                    {
+                        headers: {
+                            "Authorization": "Bearer " + token
+                        }
+                    }
+                );
+
+
+                if (response.status === 401) {
+
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("user");
+
+                    window.location.reload();
+
+                    return;
+
+                }
+
+
+                if (!response.ok) return;
+
+
+                const data = await response.json();
+
+
+                if (data.count > 0) {
+
+                    notificationBadge.textContent = data.count;
+
+                    notificationBadge.style.display = "inline-flex";
+
+                } else {
+
+                    notificationBadge.style.display = "none";
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "Unable to load notification count:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        // Logout
+        logoutButton.addEventListener("click", function() {
+
+            localStorage.removeItem("token");
+
+            localStorage.removeItem("user");
+
+            window.location.href = "index.html";
+
+        });
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,381 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claim Item | CampusFind</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .claim-page {
+            min-height: 75vh;
+            padding: 55px 20px;
+            background: linear-gradient(135deg, #edf2ff, #f8faff, #f1ebff);
+        }
+
+        .claim-container {
+            max-width: 1050px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            align-items: start;
+        }
+
+        .claim-info, .claim-form {
+            background: white;
+            padding: 30px;
+            border-radius: 22px;
+            box-shadow: 0 15px 40px rgba(35, 65, 130, .09);
+            border: 1px solid #e5eaf5;
+        }
+
+        .claim-info {
+            background: linear-gradient(145deg, #2457d6, #633ed0);
+            color: white;
+        }
+
+        .claim-info h2 {
+            font-size: 27px;
+            margin-bottom: 15px;
+        }
+
+        .claim-info p {
+            color: #e1e9ff;
+            line-height: 1.8;
+        }
+
+        .claim-icon {
+            font-size: 65px;
+            margin-bottom: 20px;
+        }
+
+        .claim-item-preview {
+            margin-top: 25px;
+            padding: 18px;
+            border-radius: 15px;
+            background: rgba(255,255,255,.14);
+        }
+
+        .claim-item-preview img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .claim-item-preview h3 {
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .claim-form h2 {
+            color: #193675;
+            margin-bottom: 8px;
+        }
+
+        .claim-form .description {
+            color: #71809b;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .claim-form label {
+            display: block;
+            color: #34415b;
+            font-weight: 700;
+            font-size: 13px;
+            margin: 18px 0 7px;
+        }
+
+        .claim-form input,
+        .claim-form textarea {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid #dce3ef;
+            border-radius: 10px;
+            background: #f8faff;
+            font-size: 14px;
+        }
+
+        .claim-form textarea {
+            min-height: 125px;
+            resize: vertical;
+        }
+
+        .claim-form input:focus,
+        .claim-form textarea:focus {
+            outline: none;
+            border-color: #4778e8;
+            box-shadow: 0 0 0 4px rgba(36,87,214,.09);
+        }
+
+        .claim-submit {
+            width: 100%;
+            padding: 15px;
+            margin-top: 25px;
+            border: none;
+            border-radius: 11px;
+            color: white;
+            background: linear-gradient(135deg, #3269ed, #673ed1);
+            font-weight: 800;
+            cursor: pointer;
+            transition: .25s;
+        }
+
+        .claim-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(50,105,237,.25);
+        }
+
+        .claim-submit:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        #claimMessage {
+            margin-top: 18px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        @media(max-width: 750px) {
+            .claim-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="logo">CampusFind</div>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="items.html">Browse Items</a>
+        <a href="report-lost.html">Report Lost</a>
+        <a href="report-found.html">Report Found</a>
+        <a href="my-reports.html">My Reports</a>
+        <a href="login.html">Login</a>
+    </div>
+</nav>
+
+<header class="page-header">
+    <h1>Claim Your Belongings</h1>
+    <p>Found something that belongs to you? Submit a claim to recover it.</p>
+</header>
+
+<main class="claim-page">
+
+    <div class="claim-container">
+
+        <section class="claim-info">
+            <div class="claim-icon">🎒</div>
+
+            <h2>Is this your item?</h2>
+
+            <p>
+                Tell us why this item belongs to you.
+                The person who reported it can review your
+                claim and contact you.
+            </p>
+
+            <div class="claim-item-preview">
+                <div id="itemImage">📦</div>
+                <h3 id="itemName">Loading item...</h3>
+                <p id="itemLocation">Loading location...</p>
+                <p id="itemDescription"></p>
+            </div>
+        </section>
+
+        <section class="claim-form">
+
+            <h2>Submit a Claim</h2>
+            <p class="description">
+                Provide accurate details to help verify your ownership.
+            </p>
+
+            <form id="claimForm">
+
+                <label for="claimContact">Your Contact Number</label>
+                <input
+                    type="tel"
+                    id="claimContact"
+                    placeholder="Enter your phone number"
+                    required
+                >
+
+                <label for="claimExplanation">
+                    Why does this item belong to you?
+                </label>
+
+                <textarea
+                    id="claimExplanation"
+                    placeholder="Describe the item and any identifying details..."
+                    required
+                ></textarea>
+
+                <button type="submit" class="claim-submit" id="claimButton">
+                    Submit Claim →
+                </button>
+
+            </form>
+
+            <p id="claimMessage"></p>
+
+        </section>
+
+    </div>
+
+</main>
+
+<footer>
+    <h3>CampusFind</h3>
+    <p>Smart Campus Lost &amp; Found Management System</p>
+    <p>© 2026 CampusFind. All Rights Reserved.</p>
+</footer>
+
+<script>
+const API = "https://campusfind-cl7z.onrender.com/api";
+const token = localStorage.getItem("token");
+
+const params = new URLSearchParams(window.location.search);
+const itemId = params.get("id");
+
+let currentItem = null;
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[char]);
+}
+
+async function loadItem() {
+    if (!itemId) {
+        document.getElementById("itemName").textContent =
+            "No item selected";
+        document.getElementById("itemLocation").textContent =
+            "Open Browse Items and select an item to claim.";
+        document.getElementById("claimButton").disabled = true;
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `${API}/items/${encodeURIComponent(itemId)}`
+        );
+
+        const item = await response.json();
+
+        if (!response.ok) {
+            throw new Error(item.message || "Item not found");
+        }
+
+        currentItem = item;
+
+        document.getElementById("itemName").textContent =
+            item.itemName;
+
+        document.getElementById("itemLocation").textContent =
+            "📍 " + item.location;
+
+        document.getElementById("itemDescription").textContent =
+            item.description;
+
+        const imageArea = document.getElementById("itemImage");
+
+        if (item.image) {
+            const img = document.createElement("img");
+            img.src = item.image;
+            img.alt = item.itemName;
+            imageArea.replaceChildren(img);
+        } else {
+            imageArea.textContent = "📦";
+        }
+
+        if (item.type !== "found" || item.status !== "active") {
+            document.getElementById("claimButton").disabled = true;
+            document.getElementById("claimMessage").textContent =
+                "This item is not currently available for claims.";
+        }
+
+    } catch (error) {
+        document.getElementById("itemName").textContent =
+            "Unable to load item";
+
+        document.getElementById("claimMessage").textContent =
+            error.message;
+    }
+}
+
+document.getElementById("claimForm").addEventListener(
+    "submit",
+    async function(event) {
+        event.preventDefault();
+
+        if (!token) {
+            alert("Please login before submitting a claim.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        if (!currentItem) return;
+
+        const button = document.getElementById("claimButton");
+        const message = document.getElementById("claimMessage");
+
+        button.disabled = true;
+        button.textContent = "Submitting...";
+
+        try {
+            const response = await fetch(`${API}/claims`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    itemId: itemId,
+                    message: document.getElementById(
+                        "claimExplanation"
+                    ).value.trim(),
+                    contact: document.getElementById(
+                        "claimContact"
+                    ).value.trim()
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Claim submission failed");
+            }
+
+            message.style.color = "#16845b";
+            message.textContent = "✓ " + data.message;
+
+            document.getElementById("claimForm").reset();
+
+        } catch (error) {
+            message.style.color = "#c2414b";
+            message.textContent = error.message;
+
+        } finally {
+            button.disabled = false;
+            button.textContent = "Submit Claim →";
+        }
+    }
+);
+
+loadItem();
+</script>
+
+</body>
+</html>

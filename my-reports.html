@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reports | CampusFind</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* NAVBAR NOTIFICATION BADGE */
+        .notification-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .notification-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 5px;
+            border-radius: 20px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: 900;
+        }
+
+        .notification-badge:empty,
+        .notification-badge[data-count="0"] {
+            display: none;
+        }
+
+        /* RECOVERY BUTTON */
+        .recovered-btn {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+
+        .recovered-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 14px rgba(16, 185, 129, 0.25);
+        }
+
+        .recovered-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .recovered-badge {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: #d1fae5;
+            color: #065f46;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .claimed-badge {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .active-badge {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .my-report-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .recovery-action {
+            margin-top: 12px;
+        }
+
+        .report-status-label {
+            margin-top: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="logo">CampusFind</div>
+
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="items.html">Browse Items</a>
+        <a href="report-lost.html">Report Lost</a>
+        <a href="report-found.html">Report Found</a>
+        <a href="my-reports.html">My Reports</a>
+        <a href="my-claims.html">My Claims</a>
+        <a href="received-claims.html">Received Claims</a>
+
+        <a href="notifications.html" class="notification-nav">
+            🔔 Notifications
+            <span id="notificationBadge"
+                  class="notification-badge"
+                  data-count="0"></span>
+        </a>
+
+        <button class="login-btn" id="logoutButton">Logout</button>
+    </div>
+</nav>
+
+<header class="page-header">
+    <h1>My Reports</h1>
+    <p>Manage all your lost and found reports.</p>
+</header>
+
+<main class="my-reports-section">
+
+    <h2>Your Activity</h2>
+    <p id="reportSummary">Loading reports...</p>
+
+    <div class="report-stats">
+
+        <div class="report-stat">
+            <span>Total Reports</span>
+            <strong id="totalCount">0</strong>
+        </div>
+
+        <div class="report-stat">
+            <span>Lost Items</span>
+            <strong id="lostCount">0</strong>
+        </div>
+
+        <div class="report-stat">
+            <span>Found Items</span>
+            <strong id="foundCount">0</strong>
+        </div>
+
+        <div class="report-stat">
+            <span>Recovered</span>
+            <strong id="recoveredCount">0</strong>
+        </div>
+
+    </div>
+
+    <div class="my-reports-filters">
+
+        <input id="reportSearch"
+               type="search"
+               placeholder="Search your reports...">
+
+        <select id="reportTypeFilter">
+            <option value="all">All Types</option>
+            <option value="lost">Lost</option>
+            <option value="found">Found</option>
+        </select>
+
+        <select id="reportStatusFilter">
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="claimed">Claimed</option>
+            <option value="recovered">Recovered</option>
+        </select>
+
+    </div>
+
+    <div id="reportsMessage"></div>
+    <div id="myReportsGrid" class="my-reports-grid"></div>
+
+</main>
+
+<footer>
+    <h3>CampusFind</h3>
+    <p>Smart Campus Lost &amp; Found Management System</p>
+    <p>© 2026 CampusFind. All Rights Reserved.</p>
+</footer>
+
+<script>
+
+const API = "https://campusfind-cl7z.onrender.com/api/items";
+const token = localStorage.getItem("token");
+
+let reports = [];
+
+if (!token) {
+    alert("Please login first");
+    window.location.href = "login.html";
+}
+
+// ==========================================
+// NOTIFICATION UNREAD COUNT
+// ==========================================
+async function loadUnreadNotificationCount() {
+
+    const badge = document.getElementById("notificationBadge");
+
+    if (!badge || !token) return;
+
+    try {
+
+        const response = await fetch(
+            "https://campusfind-cl7z.onrender.com/api/notifications/unread-count",
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        const count = Number(data.count || 0);
+
+        badge.textContent =
+            count > 99 ? "99+" : (count > 0 ? String(count) : "");
+
+        badge.dataset.count = String(count);
+
+    } catch (error) {
+        console.warn("Notification count could not be loaded:", error);
+    }
+}
+
+loadUnreadNotificationCount();
+
+
+// ==========================================
+// LOGOUT
+// ==========================================
+document.getElementById("logoutButton").onclick = function() {
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    window.location.href = "login.html";
+};
+
+
+// ==========================================
+// HTML ESCAPING
+// ==========================================
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[char]);
+}
+
+
+// ==========================================
+// LOAD REPORTS
+// ==========================================
+async function loadReports() {
+
+    try {
+
+        const response = await fetch(`${API}/mine`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Unable to load reports");
+        }
+
+        reports = data;
+
+        updateStatistics();
+        displayReports();
+
+    } catch (error) {
+
+        document.getElementById("reportsMessage").textContent =
+            error.message;
+    }
+}
+
+
+// ==========================================
+// UPDATE STATISTICS
+// ==========================================
+function updateStatistics() {
+
+    document.getElementById("totalCount").textContent =
+        reports.length;
+
+    document.getElementById("lostCount").textContent =
+        reports.filter(item => item.type === "lost").length;
+
+    document.getElementById("foundCount").textContent =
+        reports.filter(item => item.type === "found").length;
+
+    document.getElementById("recoveredCount").textContent =
+        reports.filter(item => item.status === "recovered").length;
+
+    document.getElementById("reportSummary").textContent =
+        reports.length + " reports submitted";
+}
+
+
+// ==========================================
+// STATUS BADGE
+// ==========================================
+function getStatusBadge(status) {
+
+    status = status || "active";
+
+    if (status === "recovered") {
+        return `<span class="recovered-badge">✅ Recovered</span>`;
+    }
+
+    if (status === "claimed") {
+        return `<span class="claimed-badge">🤝 Claimed</span>`;
+    }
+
+    return `<span class="active-badge">🔵 Active</span>`;
+}
+
+
+// ==========================================
+// DISPLAY REPORTS
+// ==========================================
+function displayReports() {
+
+    const grid = document.getElementById("myReportsGrid");
+
+    const search = document.getElementById("reportSearch")
+        .value.toLowerCase();
+
+    const type = document.getElementById("reportTypeFilter").value;
+
+    const status = document.getElementById("reportStatusFilter").value;
+
+    const filtered = reports.filter(item => {
+
+        const matchesSearch =
+            [item.itemName, item.location, item.description, item.category]
+            .some(value =>
+                String(value || "").toLowerCase().includes(search)
+            );
+
+        const matchesType =
+            type === "all" || item.type === type;
+
+        const matchesStatus =
+            status === "all" ||
+            (item.status || "active") === status;
+
+        return matchesSearch && matchesType && matchesStatus;
+    });
+
+    if (filtered.length === 0) {
+
+        grid.innerHTML = "";
+
+        document.getElementById("reportsMessage").textContent =
+            reports.length
+                ? "No reports match your filters."
+                : "You haven't submitted any reports yet.";
+
+        return;
+    }
+
+    document.getElementById("reportsMessage").textContent = "";
+
+    grid.innerHTML = filtered.map(item => {
+
+        const currentStatus = item.status || "active";
+
+        let recoveryButton = "";
+
+        // LOST REPORT RECOVERY
+        if (
+            item.type === "lost" &&
+            currentStatus !== "recovered"
+        ) {
+
+            recoveryButton = `
+                <div class="recovery-action">
+
+                    <button class="recovered-btn"
+                        data-id="${escapeHTML(item._id)}">
+
+                        ✅ Mark as Recovered
+
+                    </button>
+
+                </div>
+            `;
+        }
+
+        // FOUND REPORT RETURN CONFIRMATION
+        if (
+            item.type === "found" &&
+            currentStatus === "claimed"
+        ) {
+
+            recoveryButton = `
+                <div class="recovery-action">
+
+                    <button class="recovered-btn"
+                        data-id="${escapeHTML(item._id)}">
+
+                        ✅ Confirm Item Returned
+
+                    </button>
+
+                </div>
+            `;
+        }
+
+        return `
+            <div class="my-report-card">
+
+                <div class="my-report-image">
+                    ${
+                        item.image
+                        ? `<img src="${escapeHTML(item.image)}" alt="Item">`
+                        : "📦"
+                    }
+                </div>
+
+                <div class="my-report-body">
+
+                    <span class="status ${escapeHTML(item.type)}">
+                        ${escapeHTML(item.type.toUpperCase())}
+                    </span>
+
+                    <h3>${escapeHTML(item.itemName)}</h3>
+
+                    <p>${escapeHTML(item.description)}</p>
+
+                    <p>📍 ${escapeHTML(item.location)}</p>
+
+                    <div class="report-status-label">
+                        ${getStatusBadge(currentStatus)}
+                    </div>
+
+                    <div class="my-report-buttons">
+
+                        <a href="item-details.html?id=${encodeURIComponent(item._id)}">
+                            View
+                        </a>
+
+                        <a href="edit-item.html?id=${encodeURIComponent(item._id)}">
+                            Edit
+                        </a>
+
+                        <button class="delete-report"
+                            data-id="${escapeHTML(item._id)}">
+                            Delete
+                        </button>
+
+                    </div>
+
+                    ${recoveryButton}
+
+                </div>
+
+            </div>
+        `;
+
+    }).join("");
+
+
+    // ==========================================
+    // DELETE BUTTONS
+    // ==========================================
+    grid.querySelectorAll(".delete-report").forEach(button => {
+
+        button.addEventListener("click", () =>
+            deleteReport(button.dataset.id)
+        );
+
+    });
+
+
+    // ==========================================
+    // RECOVERED BUTTONS
+    // ==========================================
+    grid.querySelectorAll(".recovered-btn").forEach(button => {
+
+        button.addEventListener("click", () =>
+            markRecovered(button.dataset.id)
+        );
+
+    });
+
+}
+
+
+// ==========================================
+// MARK ITEM AS RECOVERED
+// ==========================================
+async function markRecovered(id) {
+
+    const confirmed = confirm(
+        "Have you successfully recovered or returned this item?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+
+        const response = await fetch(
+            `${API}/${encodeURIComponent(id)}/recovered`,
+            {
+                method: "PATCH",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message || "Unable to update item status"
+            );
+        }
+
+        alert("🎉 Item marked as recovered successfully!");
+
+        await loadReports();
+
+    } catch (error) {
+
+        alert(error.message);
+    }
+}
+
+
+// ==========================================
+// DELETE REPORT
+// ==========================================
+async function deleteReport(id) {
+
+    if (!confirm("Are you sure you want to delete this report?")) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            `${API}/${encodeURIComponent(id)}`,
+            {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Delete failed");
+        }
+
+        reports = reports.filter(item => item._id !== id);
+
+        updateStatistics();
+        displayReports();
+
+        alert("Report deleted successfully!");
+
+    } catch (error) {
+
+        alert(error.message);
+    }
+}
+
+
+// ==========================================
+// FILTERS
+// ==========================================
+document.getElementById("reportSearch")
+    .addEventListener("input", displayReports);
+
+document.getElementById("reportTypeFilter")
+    .addEventListener("change", displayReports);
+
+document.getElementById("reportStatusFilter")
+    .addEventListener("change", displayReports);
+
+
+// ==========================================
+// INITIAL LOAD
+// ==========================================
+if (token) {
+    loadReports();
+}
+
+</script>
+
+</body>
+</html>

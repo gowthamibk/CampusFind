@@ -1,0 +1,555 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Item - CampusFind</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .notification-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 5px;
+            border-radius: 50px;
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .edit-container {
+            max-width: 650px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-container h1 {
+            color: #1e3a8a;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .edit-container label {
+            display: block;
+            margin: 15px 0 7px;
+            font-weight: 600;
+        }
+
+        .edit-container input,
+        .edit-container select,
+        .edit-container textarea {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        .edit-container textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .edit-container button {
+            width: 100%;
+            margin-top: 22px;
+            padding: 13px;
+            background: #1e3a8a;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .edit-container button:hover {
+            background: #162d6b;
+        }
+
+        .edit-container button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #currentImage {
+            max-width: 220px;
+            max-height: 180px;
+            display: block;
+            margin-top: 10px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        #message {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .image-preview-section {
+            margin-top: 15px;
+        }
+
+        .image-preview-section p {
+            margin-bottom: 8px;
+            color: #475569;
+        }
+
+        @media(max-width: 700px) {
+            .edit-container {
+                margin: 25px 15px;
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">Campus<span>Find</span></a>
+
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="items.html">Browse Items</a>
+                <a href="my-reports.html">My Reports</a>
+                <a href="my-claims.html">My Claims</a>
+                <a href="received-claims.html">Received Claims</a>
+                <a href="notifications.html">
+                    Notifications
+                    <span id="notificationBadge"
+                          class="notification-badge"
+                          style="display:none;">0</span>
+                </a>
+            </div>
+
+            <button id="logoutButton" class="btn btn-primary" type="button">
+                Logout
+            </button>
+        </div>
+    </nav>
+
+    <div class="edit-container">
+
+        <h1>✏️ Edit Reported Item</h1>
+
+        <form id="editForm">
+
+            <label for="itemName">Item Name</label>
+            <input type="text" id="itemName" maxlength="100" required>
+
+            <label for="category">Category</label>
+            <select id="category" required>
+                <option value="electronics">Electronics</option>
+                <option value="documents">Documents</option>
+                <option value="books">Books</option>
+                <option value="bags">Bags</option>
+                <option value="accessories">Accessories</option>
+                <option value="others">Others</option>
+            </select>
+
+            <label for="description">Description</label>
+            <textarea id="description" maxlength="2000" required></textarea>
+
+            <label for="date">Date</label>
+            <input type="date" id="date" required>
+
+            <label for="location">Location</label>
+            <input type="text" id="location" maxlength="200" required>
+
+            <label for="contact">Contact Information</label>
+            <input type="text" id="contact" maxlength="100" required>
+
+            <label for="type">Report Type</label>
+            <select id="type" required>
+                <option value="lost">Lost</option>
+                <option value="found">Found</option>
+            </select>
+
+            <label for="image">Change Image (Optional)</label>
+            <input type="file" id="image" accept="image/*">
+
+            <div class="image-preview-section">
+                <p>Current / Selected Image:</p>
+                <img id="currentImage" alt="Item image preview" style="display:none;">
+            </div>
+
+            <button type="submit" id="saveButton">Save Changes</button>
+
+            <p id="message"></p>
+
+        </form>
+
+    </div>
+
+    <script>
+        const API_URL = "https://campusfind-cl7z.onrender.com/api/items";
+        const NOTIFICATION_API = "https://campusfind-cl7z.onrender.com/api/notifications";
+
+        const token = localStorage.getItem("token");
+
+        let user = null;
+        let currentItem = null;
+
+        try {
+            user = JSON.parse(localStorage.getItem("user") || "null");
+        } catch (error) {
+            user = null;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const itemId = params.get("id");
+
+        const editForm = document.getElementById("editForm");
+        const saveButton = document.getElementById("saveButton");
+        const message = document.getElementById("message");
+        const imageInput = document.getElementById("image");
+        const preview = document.getElementById("currentImage");
+
+        // AUTHENTICATION
+        if (!token || !user || !user.id) {
+
+            alert("Please login first.");
+
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+
+            window.location.href = "login.html";
+        }
+
+        // LOGOUT
+        document.getElementById("logoutButton").addEventListener("click", () => {
+
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+
+            window.location.href = "login.html";
+        });
+
+        // NOTIFICATION COUNT
+        async function loadNotificationCount() {
+
+            if (!token || !user) return;
+
+            try {
+
+                const response = await fetch(
+                    `${NOTIFICATION_API}/unread-count`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
+                if (response.status === 401) {
+                    handleSessionExpiry();
+                    return;
+                }
+
+                if (!response.ok) return;
+
+                const data = await response.json();
+
+                const badge = document.getElementById("notificationBadge");
+
+                const count = Number(data.count || 0);
+
+                if (count > 0) {
+                    badge.textContent = count > 99 ? "99+" : count;
+                    badge.style.display = "inline-flex";
+                } else {
+                    badge.style.display = "none";
+                }
+
+            } catch (error) {
+                console.error("Notification count error:", error);
+            }
+        }
+
+        // SESSION EXPIRY
+        function handleSessionExpiry() {
+
+            alert("Your session has expired. Please login again.");
+
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+
+            window.location.href = "login.html";
+        }
+
+        // LOAD ITEM
+        async function loadItem() {
+
+            try {
+
+                if (!itemId || !/^[a-fA-F0-9]{24}$/.test(itemId)) {
+                    alert("Invalid item ID.");
+                    window.location.href = "items.html";
+                    return;
+                }
+
+                const response = await fetch(
+                    `${API_URL}/${encodeURIComponent(itemId)}`
+                );
+
+                const data = await response.json().catch(() => ({}));
+
+                if (response.status === 401) {
+                    handleSessionExpiry();
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Unable to load item.");
+                }
+
+                currentItem = data;
+
+                // OWNER CHECK
+                const ownerId = typeof data.reportedBy === "object"
+                    ? data.reportedBy?._id
+                    : data.reportedBy;
+
+                if (String(ownerId) !== String(user.id)) {
+
+                    alert("You are not authorized to edit this item.");
+
+                    window.location.href = "items.html";
+                    return;
+                }
+
+                // RECOVERED ITEM PROTECTION
+                if (data.status === "recovered") {
+
+                    alert("Recovered items cannot be edited.");
+
+                    window.location.href = "items.html";
+                    return;
+                }
+
+                document.getElementById("itemName").value =
+                    data.itemName || "";
+
+                document.getElementById("category").value =
+                    data.category || "others";
+
+                document.getElementById("description").value =
+                    data.description || "";
+
+                // Prevent date timezone shifting
+                if (data.date) {
+                    document.getElementById("date").value =
+                        String(data.date).substring(0, 10);
+                }
+
+                document.getElementById("location").value =
+                    data.location || "";
+
+                document.getElementById("contact").value =
+                    data.contact || "";
+
+                document.getElementById("type").value =
+                    data.type || "lost";
+
+                if (data.image) {
+                    preview.src = data.image;
+                    preview.style.display = "block";
+                } else {
+                    preview.removeAttribute("src");
+                    preview.style.display = "none";
+                }
+
+            } catch (error) {
+
+                alert(error.message);
+
+                window.location.href = "items.html";
+            }
+        }
+
+        // IMAGE PREVIEW AND VALIDATION
+        imageInput.addEventListener("change", function() {
+
+            const file = this.files[0];
+
+            if (!file) return;
+
+            if (!file.type.startsWith("image/")) {
+
+                alert("Please select a valid image.");
+
+                this.value = "";
+                return;
+            }
+
+            if (file.size > 3 * 1024 * 1024) {
+
+                alert("Image size must be less than 3MB.");
+
+                this.value = "";
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function() {
+                preview.src = reader.result;
+                preview.style.display = "block";
+            };
+
+            reader.onerror = function() {
+                alert("Unable to preview the selected image.");
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        // UPDATE ITEM
+        editForm.addEventListener("submit", async (event) => {
+
+            event.preventDefault();
+
+            if (!currentItem) {
+                alert("Item data is unavailable.");
+                return;
+            }
+
+            if (currentItem.status === "recovered") {
+                alert("Recovered items cannot be edited.");
+                return;
+            }
+
+            saveButton.disabled = true;
+
+            message.textContent = "Saving changes...";
+            message.style.color = "#64748b";
+
+            try {
+
+                let imageData = currentItem.image || "";
+
+                const imageFile = imageInput.files[0];
+
+                if (imageFile) {
+
+                    if (!imageFile.type.startsWith("image/")) {
+                        throw new Error("Please select a valid image.");
+                    }
+
+                    if (imageFile.size > 3 * 1024 * 1024) {
+                        throw new Error("Image size must be less than 3MB.");
+                    }
+
+                    imageData = await new Promise((resolve, reject) => {
+
+                        const reader = new FileReader();
+
+                        reader.onload = () => resolve(reader.result);
+
+                        reader.onerror = () =>
+                            reject(new Error("Could not read image."));
+
+                        reader.readAsDataURL(imageFile);
+                    });
+                }
+
+                const updatedItem = {
+
+                    itemName: document.getElementById("itemName")
+                        .value.trim(),
+
+                    category: document.getElementById("category")
+                        .value,
+
+                    description: document.getElementById("description")
+                        .value.trim(),
+
+                    date: document.getElementById("date")
+                        .value,
+
+                    location: document.getElementById("location")
+                        .value.trim(),
+
+                    contact: document.getElementById("contact")
+                        .value.trim(),
+
+                    type: document.getElementById("type")
+                        .value,
+
+                    image: imageData
+                };
+
+                // BASIC FORM VALIDATION
+                if (
+                    !updatedItem.itemName ||
+                    !updatedItem.description ||
+                    !updatedItem.date ||
+                    !updatedItem.location ||
+                    !updatedItem.contact
+                ) {
+                    throw new Error("Please fill in all required fields.");
+                }
+
+                const response = await fetch(
+                    `${API_URL}/${encodeURIComponent(itemId)}`,
+                    {
+                        method: "PUT",
+
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        },
+
+                        body: JSON.stringify(updatedItem)
+                    }
+                );
+
+                const result = await response.json().catch(() => ({}));
+
+                if (response.status === 401) {
+                    handleSessionExpiry();
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(
+                        result.message || "Unable to update item."
+                    );
+                }
+
+                alert("Item updated successfully!");
+
+                window.location.href = "items.html";
+
+            } catch (error) {
+
+                message.textContent = error.message;
+                message.style.color = "red";
+
+                saveButton.disabled = false;
+            }
+        });
+
+        // INITIAL LOAD
+        if (token && user && user.id) {
+            loadItem();
+            loadNotificationCount();
+        }
+
+    </script>
+
+</body>
+</html>
